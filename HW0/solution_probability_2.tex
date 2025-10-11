@@ -1,0 +1,24 @@
+
+\begin{proof}
+
+Let $X_i$ be the indicator variable $\mathbb{I}\{ x_i > M\}$, and let $Z$ be the number of times $M$ is changed:
+
+$$\mathbb{E}[Z] = \mathbb{E}\left[ \sum_{i=1}^n X_i\right] = \sum_{i=1}^n \mathbb{E}[X_i]$$
+
+It follows from the initialisation of $M$ that:
+
+$$M = - \infty < x_1, \ \forall x_1 \in \{1,...,n\} \Longrightarrow \mathbb{E}[X_1] = 1$$   
+
+As $X_i$ is an indicator variable, the expectation of $X_i$ is the probability that $x_i > M$:
+
+$$\mathbb{E}[X_i] = P(x_i > M) = P(x_i > x_j), \ \ \forall j < i = \{2, ..., n\}$$
+
+Because the numbers $x_1, ..., x_n$ are a random permutation of the set $\{1, ..., n\}$, the probability that the latest integer $x_i$ is larger than all of its predecessors $x_j$ is uniform over $i$. This results directly from the fact that in any permutation $\{1, ..., n\}$, each of the $i$ f\cite{}irst numbers are picked with equal probability. Thus:
+
+$$P\left( x_i = \max \{x_1, ..., x_i \} \right) = \frac{1}{i}$$
+
+And finally:
+
+$$\mathbb{E}[Z] = \sum_{i=1}^n \mathbb{E}[X_i] = \sum_i \frac{1}{i} \stackrel{\triangle}{=} H_n = \Theta(\log n)$$
+
+\end{proof}

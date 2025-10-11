@@ -1,0 +1,93 @@
+\subsection{Part A}
+
+\begin{proof}
+
+We want to show the inequality holds for the min $k$-cut. Thus, it suffices to show that there exists some $k$-cut $C$ such that $|C| \le 2(k-1)\frac{m}{n}$, and it will follow that the inequality holds for the min $k$-cut, by definition.
+
+Consider the family of $k$-cuts such that $(S_1,...,S_k)$ contains exactly $(k-1)$ singleton chosen uniformly at random, and a $k$th set containing the remaining vertices:
+
+$$S_1 = \{v_1\},\ S_2 = \{v_2 \}, \ ... \ , S_{k-1} = \{ v_{k-1}\}, \ S_k = V\backslash \{v_1, ..., v_{k-1} \}$$
+
+Consider a particular edge $e \in E$ of this family. Clearly, $e$ is cut if and only if exactly one of its end vertices is chosen as a singleton (i.e. not both of its vertices are in $S_k$).
+
+For any vertex $v \in V$, the probability that $v$ is among the $(k-1)$ vertices chosen uniformly at random to form singleton sets is:
+
+$$P[ \ v \text{ chosen}] = \frac{k-1}{n}$$
+
+Thus, for any edge $e_{uv}$ between two vertices $u$ and $v$, the probability that $e_{uv}$ is cut is 
+
+$$\begin{align*}
+P[e_{uv} \text{ cut}] &= P[u \text{ chosen}] + P[v \text{ chosen}] - P[\text{ both } u \text{ and } v \text{ chosen}] \\
+&\le P[u \text{ chosen}] + P[v \text{ chosen}] \\
+&= \frac{k-1}{n} + \frac{k-1}{n} = \frac{2(k-1)}{n}
+\end{align*}$$
+
+By linearity of expectation, it follows that for the described family of $k$-cuts, the expected cut size 
+
+$$\mathbb{E}[\text{cuts}] \le 2(k-1)\frac{m}{n}$$
+
+It follows that there exists a cut $C$ such that $|C| \le 2(k-1)\frac{m}{n}$, and thus by definition
+$$\lambda \le |C| \le 2(k-1)\frac{m}{n}$$
+
+\end{proof}
+
+
+
+\subsection{Part B}
+
+\begin{proof}
+The min $k$-cut survives phase $1$ if and only if we do not contract any of its $\lambda$ edges throughout the entire process.
+
+Let $e$ be an edge belonging to a fixed min $k$-cut $\tilde{C}$. Using our result from part $a)$, we can upper bound the probability that $e$ is contracted u.a.r among the $m_i$ possible remaining edges at the $i$th iteration of phase $1$:
+
+$$P[e \text{ contracted}] = \frac{\lambda}{m_i} \le \frac{2(k-1)}{i}$$
+
+And thus 
+
+$$P[e \text{ not contracted}] \ge 1 - \frac{2(k-1)}{i}$$
+
+The probability of $\tilde{C}$ surviving is equal to the probability that none of its edges are contracted: 
+
+$$P[\tilde{C} \text{ survives phase 1}] \ge \prod_{i=2k-1}^n \left[ 1- \frac{2(k-1)}{i}\right] \\ = \prod_{i=2k-1}^n \frac{i-2k+2}{i} $$
+
+Where numerator becomes 
+
+$$\prod_{i=2k-1}^n (i-2k+2) = \prod_{j=1}^{n-2k+2} j = (n-2k + 2)!$$
+
+And the denominator yields
+
+$$\prod_{i=2k-1}^n i = \frac{n!}{(2k-2)!}$$
+
+Plugging back into our inequality, we finally get:
+
+$$
+\begin{align*}
+P[\tilde{C} \text{ survives phase 1}] &\ge \frac{(n-2k+2)!(2k-2)!}{n!} \\
+&= \left( \frac{n!}{(n-2k+2)!(2k-2)!}\right)^{-1} = \left[ \begin{pmatrix} n \\ 2k-2\end{pmatrix} \right]^{-1}
+\end{align*}
+$$
+
+\end{proof}
+
+
+
+\subsection{Part C}
+\begin{proof}
+Suppose the fixed min $k$-cut survives phase $1$. In other words, if our fixed min $k$-cut was $(S_1,...,S_k)$ at the beginning of the algorithm, then $\{S_1,..,S_k\}$ is still a valid $k$-cut in the graph obtained after phase $1$. This means that each remaining super-node is entirely in exactly one of the parts $S_i$.
+
+Thus, for the min $k$-cut to survive phase 2, none of the sets $S_i$ can be merged. This means that each super-node in a same given set $S_i$ must all have the same unique label $L_i$ associated to their set $S_i$.
+
+Formally, let $w_j$ be the $j$-th supernode in $S_i$ after phase 1. Then, for the fixed $k$-min cut to survive, we must have 
+
+$$\forall w_j \in S_i: l(w_j) = L_i$$
+
+Where $l(w_j)$ is the label assigned to supernode $w_j$. 
+
+Because we assign each of the $k$ labels uniformly at random, the probability that all $2k-2$ remaining supernodes after phase 1 are assigned their unique label $L_i$ is
+
+$$\left( \frac{1}{k}\right)^{2k-2} = \frac{1}{k^{2k-2}}$$
+
+And since there are $k!$ ways of bijectively assigning every label from $\{L_1,..., L_k\}$ to each set $\{S_1, ..., S_k\}$, we have that the probability that the fixed min $k$-cut survives phase 2 is:
+
+$$P = \frac{k!}{k^{2k-2}}$$
+\end{proof}

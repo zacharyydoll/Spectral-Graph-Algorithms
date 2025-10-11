@@ -1,0 +1,34 @@
+
+
+Let $A_i$ be the event that both judges agree on question $i$, and $c_i = \frac{i}{i+1}$ be the assumed probability that any of the judges gives an opposite answer for question $i$. In other words, $c_i$ is the probability that any judge did not repeat their previous answer. 
+
+Because $c_i$ is the same for both judges, the probability that exactly one judge switches his current answer from his previous one is
+
+$$P[\text{exactly one judge changes answer}] = c_i (1-c_i) + c_i(1-c_i) = 2c_i(1-c_i)$$
+
+Similarly, we compute the probability that the judges both keep their answer or both switch their answer:
+
+$$P[\text{both keep or both switch}] = c_i^2 + (1-c_i)^2$$
+
+
+Using the results we have just obtained, we compute the probability that both of their $i$th answers are the same
+
+$$P(A_i) = P(\bar{A}_{i-1})2c_i(1-c_i) + P(A_{i-1})[c_i^2 + (1-c_i)^2]$$
+
+Where $\bar{A}_{j}$ is the complement of the event $A_j$.
+
+To reduce verbosity, let $p_i = P(A_i)$ and define
+
+$$x_i \stackrel{\text{def}}{=} 2c_i(1-c_i) \Longrightarrow c_i^2 + (1-c_i)^2 = 1-x_i$$
+
+Plugging back into our initial expression, we obtain the recursive relation
+
+$$p_i = (1-p_{i-1})x_i \ + \ p_{i-1}(1-x_i)$$
+
+Substituting $p_{i-1}$ by the given initial probability of a judge answering either true or false ($p = \tfrac{1}{2}$), we have:
+
+$$p_i = (1-p_{i-1})x_i \ + \ p_{i-1}(1-x_i) \bigg|_{p_{i-1}=\tfrac{1}{2}} = \frac{1}{2}$$
+
+Finally, let $Z_i$ be the indicator variable $Z_i = \mathbb{I}\{A_i\}$. Then the expected number of answers on which the two judges agree is
+
+$$\mathbb{E}\left[ \sum_{i = 1}^n Z_i\right] = \sum_{i = 1}^n \mathbb{E}[Z_i] = \sum_{i = 1}^n \frac{1}{2} = \frac{n}{2}$$

@@ -1,0 +1,142 @@
+\documentclass[11pt,a4paper,twoside]{article}
+
+\newcommand{\assignment}{Homework 0 Solutions}
+\newcommand{\studentone}{Barras Simon <simon.barras@epfl.ch>}
+\newcommand{\studenttwo}{Doll Zachary <zachary.doll@epfl.ch>} % Comment out if there is no second student
+%\newcommand{\studentthree}{Student 3 name + email} % Comment out if there is no third student
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{mathpazo}
+
+\usepackage{amsmath,amssymb,amsfonts}
+
+\usepackage{nicefrac}
+
+\newcommand{\nf}{\nicefrac}
+
+\usepackage[backref,colorlinks,citecolor=blue,bookmarks=true]{hyperref}
+
+\usepackage[shortlabels]{enumitem}
+\newlist{alphenum}{enumerate}{2}
+\setlist[alphenum]{label=(\alph*),beginpenalty=10000}
+
+\newlist{menum}{enumerate}{2}
+\setlist[menum]{label=(\arabic*),beginpenalty=10000}
+
+\usepackage[hmargin=2.8cm,top=2.8cm,bottom=3.5cm,nohead,footskip=48pt]{geometry}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Claim}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\usepackage{bm}
+
+\parindent0pt
+\parskip1ex
+
+% reset mathcal fonts to detault
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\makeatletter
+\newcommand{\header}{%
+\mbox{}
+\vspace*{-1.8cm}
+\par
+\parbox[b]{13.1cm}{\raggedright
+    {\large\bfseries Topics in Theoretical Computer Science: Randomized Algorithms}\\[.5ex]    
+    EPFL, Fall semester, 2025 \\[2ex]
+}%
+%\parbox[b]{4.3cm}{\hspace*{0pt}\fbox{\includegraphics[width=4.3cm]{RSP-LEO-logo.pdf}}}%
+
+  
+\vspace*{-.3cm}
+
+\rule{\textwidth}{.5pt}
+\vspace*{-.2cm}
+
+{\Large\bfseries \assignment } \\[2ex]
+{\large \studentone \\[1ex]
+\@ifundefined{studenttwo}{}{
+    \studenttwo \\[1ex]
+}
+\@ifundefined{studentthree}{}{
+    \studentthree \\[1ex]
+}
+}
+\vspace*{-0.5cm}
+
+\rule{\textwidth}{.5pt}
+
+\vspace*{-.3cm}
+
+}
+\makeatother
+
+
+\begin{document}
+
+\header
+
+% SORTING ALMOST CORRECT SORTING
+% SUBMODULAR PORTFOLIO OPTIMIZATION
+% WHY STRAIGHTFORWARD USE OF PREDICTIONS IS DANGEROUS (SCHEDULING OR CACHING)
+% MECHANISM DESIGN ON THE LINE?
+
+
+
+\section{Probability Problem 1}
+You want to sample uniformly at random from the set of all
+$n$-bit strings that are \emph{balanced}, i.e., that contain
+exactly $n/2$-many 0's and $n/2$-many 1's (assume $n$ is
+even). You do the following: Sample a uniform random string $\omega$
+from the set of all $n$-bit strings, and output $\omega$ (and stop) if $\omega$ is
+balanced, else reject and sample again.
+
+Show that the expected number of $n$-bit strings you sample is $O(\sqrt{n})$.  (Hint: You may use \href{https://en.wikipedia.org/wiki/Stirling's\_approximation}{Stirling's approximation}.)
+
+\subsection{Solution}
+\input{solution_probability_1.tex}
+
+\section{Probability Problem 2}
+Let $x_1, x_2, \ldots, x_n$ be a random permutation of the numbers $[n] := \{1,2,\ldots, n\}$. You scan the numbers from left
+to right. At any time, you maintain a number $M$ in your hand,
+initially $M = -\infty$. When you see $x_i$, if
+$x_i > M$ then set $M \gets x_i$ (``you change $M$''), else leave $M$ unchanged. Show that the expected number of times $M$ is changed is $H_n := 1 + \nf12 + \nf13 + \ldots + \nf1n$.
+\subsection{Solution}
+\input{solution_probability_2.tex}
+
+\section{Probability Problem 3}
+Two judges are both giving opinions on a series of $n$ questions. On each question, they answer True or False ($T$ or $F$ for short). On the first question they each independently answer $T$ or $F$ with probability $\nf12$. Thereafter, they steadily become more ``stick-in-the-mud'': for the $i^{th}$ question, they independently repeat their own previous answer with probability $1 -\frac1{i+1}$, and give the opposite answer with probability $\frac1{i+1}$. What is the expected number of answers on which they agree?
+
+\subsection{Solution}
+\input{solution_probability_3.tex}
+
+\section{Algorithm Problem 1}
+Let $A[1 \ldots n]$ be an array of pairwise distinct numbers. A pair $(i,j)$ of indices $1 \leq i < j \leq n$ is called an
+\emph{inversion} of $A$ if $A[i] > A[j]$. (For example,
+the array $\langle 8,5,2,7,9 \rangle$ has four inversions---$(1,2), (1,3), (1,4)$, and $(2,3)$.)
+
+Give a deterministic algorithm running in time $\Theta(n \log n)$ for computing the number of inversions in $A$. You may assume that $n$ is a power of two. (E.g., you could use divide-and-conquer.)
+
+
+\subsection{solution}
+\input{solution_alg_1.tex}
+
+\section{Algorithm Problem 2}
+You are given a (connected) directed acyclic graph $G = (V,E)$ where each edge $e \in E$ has length $\ell_e$. Give a polynomial-time algorithm to find the longest directed path in the graph. Ideally your algorithm should run in linear time in the number of edges of $G$.
+\subsection{solution}
+\input{solution_alg_2.tex}
+
+\end{document}

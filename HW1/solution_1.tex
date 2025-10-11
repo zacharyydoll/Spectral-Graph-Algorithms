@@ -1,0 +1,126 @@
+This problem illustrates an application of the first, and later, the second moment method.
+
+\subsubsection{Part A}
+\begin{proof}
+The probability that a graph build with Erd\H{o}s-R\'enyi $G=(n, p)$ contains no isolated vertex can be computed with the first-moment method.
+
+The first step is to define a non-negative integer random variable $X$ that counts the number of isolated vertices (the "bad" events). For each vertex $v$, set:
+$$
+X_v = \begin{cases}
+1 \quad \text{if } v \text{ is isolated (degree 0)} \\
+0 \quad \text{otherwise}
+\end{cases}
+$$
+Thus,
+$$
+X = \sum^n_{v=1}X_v
+$$
+
+The probability that a fixed vertex $v$ is isolated is the probability that none of its $n-1$ potential incident edges is chosen:
+$$
+\text{Pr}[X_v=1] = (1-p)^{n-1}
+$$
+Given
+$$
+p \ge \frac{(1+\epsilon)\ln n}{n-1} \quad \epsilon > 0
+$$
+
+Using the inequality $1-x \le e^{-x}$, we can bound:
+$$
+(1-p)^{n-1} \le e^{-p(n-1)} \le e^{-(1+\epsilon)\ln n} = n^{-(1+\epsilon)}
+$$
+Therefore, the expected number of isolated vertices satisfies:
+$$
+\mathbb{E}[X] = \sum^n_{v=1}\mathbb{E}[X_v] = n * \text{Pr}[X_v=1] \le n * n^{-(1+\epsilon)} = n^{-\epsilon} \rightarrow 0
+$$
+
+Finality, by Markov's inequality,
+$$
+\text{Pr}[\textit{there exists an isolated vertex}] = \text{Pr}[X\ge1] \le \mathbb{E}[X] = n^{-\epsilon} = o(1)
+$$
+This concludes that:
+$$
+\text{Pr}[\textit{no isolated vertices}] = 1 - \text{Pr}[X\ge1] = 1 - o(1)
+$$
+\end{proof}
+
+
+\subsubsection{Part B}
+\begin{proof}
+The probability that an Erd\H{o}s-R\'enyi graph $G=(n, p)$ contains at least one isolated vertex can be established using the second moment method.
+
+The first step is also to define a non-negative integer random variable $X$ that counts the number of isolated vertices (the "good" events this time). For each vertex $v$, set
+$$
+X_v = \begin{cases}
+1 \quad \text{if } v \text{ is isolated (degree 0)} \\
+0 \quad \text{otherwise}
+\end{cases}
+$$
+Thus,
+$$
+X = \sum^n_{v=1}X_v
+$$
+
+The probability that a fixed vertex $v$ is isolated is the probability that none of its $n-1$ potential incident edges is chosen:
+$$
+\text{Pr}[X_v=1] = (1-p)^{n-1}
+$$
+Given
+$$
+p \le \frac{(1-\epsilon)\ln n}{n-1} \quad \epsilon > 0
+$$
+
+Using the inequality $\ln(1-x) \ge -\frac{x}{1-x}$ for $x\in (0, 1)$, the bound is:
+$$
+q = (1-p)^{n-1} = e^{(n-1)\ln(1-p)} \ge e^{-\frac{p(n-1)}{1-p}}
+$$
+For convenience, we denote this probability by $q$.
+
+Therefore, as $p\rightarrow 0$, the expected number of isolated vertices satisfies
+$$
+\mathbb{E}[X] = \sum^n_{v=1}\mathbb{E}[X_v] = n \cdot \text{Pr}[X_v=1] = n \cdot \mathbb{E}[X_v] =  nq \ge n^{\epsilon + o(1)} \xrightarrow{n\rightarrow \infty} \infty
+$$
+
+To apply the Chebyshev's, the next step is to bound the variance:
+$$
+\text{Var}(X) = \sum^n_{v=1}\text{Var}(X_v) + \sum^n_{v\ne u}\text{Cov}(X_v, X_u)
+$$
+For each $v$,
+$$
+\text{Var}(X_v) = \mathbb{E}[X_v^2] - \mathbb{E}[X_v]^2 = \mathbb{E}[X_v] - \mathbb{E}[X_v]^2 \le \mathbb{E}[X_v] = q
+$$
+
+For $\text{Cov}(X_v, X_u)$ where $v\ne u$,
+$$
+\text{Cov}(X_v, X_u) = \mathbb{E}[X_vX_u] - \mathbb{E}[X_v]^2 = \text{Pr}[X_v = X_u = 1] - q^2
+$$
+
+The event $\{X_v = X_u = 1\}$ requires that all edges incident to $v$ or $u$ are absent. Since there is a potential edge connection $v$ and $v$, the number of such edges is $2n-3$,
+$$
+\text{Cov}(X_v, X_u) = (1-p)^{2n-3} - q^2 =\frac{q^2}{1-p} - q^2 = q^2\frac{p}{1-p}
+$$
+
+Substituting these bounds,
+$$
+\text{Var}(X) \le nq + n(n-1) \cdot q^2\frac{p}{1-p}
+$$
+
+Comparing the variance with the squared expectation:
+$$
+\frac{\text{Var}(X)}{\mathbb{E}[X]^2} \le \frac{nq}{n^2q^2} + \frac{n(n-1) \cdot q^2\frac{p}{1-p}}{n^2q^2} = \frac{1}{nq} + \frac{(n-1)}{n}\frac{p}{1-p}
+$$
+
+Since $nq=\mathbb{E}[X] \rightarrow \infty$ and $p \rightarrow 0$, the conclusion is
+$$
+\frac{\text{Var}(X)}{\mathbb{E}[X]^2} \rightarrow 0
+$$
+By Chebyshev's inequality,
+$$
+\text{Pr}[X=0] = \text{Pr}[\textit{no isolated vertices}] \le \frac{\text{Var}(X)}{\mathbb{E}[X]^2}
+$$
+Therefore,
+$$
+\text{Pr}[\textit{has isolated vertices}] = \text{Pr}[X\ge1] = 1 - \text{Pr}[X=0] = 1 -o(1)
+$$
+
+\end{proof}

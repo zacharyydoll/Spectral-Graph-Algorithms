@@ -1,0 +1,168 @@
+\subsubsection{Part A}
+Let $\mathcal{G}_{v,i}$ denote the event that a vertex $v\in G_{i-1}$ is relaxed at the step $i$. That is, at least one of its incident edges is selected as $S_i$.
+$$
+\text{Pr}[\mathcal{G}_{v,i}] = \text{Pr}[\text{at least one } e\in\delta(v) \text{ is selected in }S_i]
+$$
+Where $\delta(v)$ denotes the set of edges incident to $v$.
+
+We aim to show that:
+$$
+\text{Pr}[\mathcal{G}_{v,i}] \ge 1-\frac{1}{e}
+$$
+\begin{proof}
+The event $\mathcal{G}_{v,i}$ fails to occur only if none of the edges incident to $v$ is selected. Since each edge is included in $S_i$ independently with probability $p=\frac{1}{\lambda}$,
+$$
+\text{Pr}[\mathcal{G}_{v,i}] = 1- \text{Pr}[\text{no edge in }\delta(v)\text{ is selected}] = 1 - (1-p)^{|\delta(v)|} = 1 - \left(1-\frac{1}{\lambda}\right)^{|\delta(v)|}
+$$
+Because the minimum degree in the graph is at least the min-cut value, we have $|\delta(v)| \ge \lambda$. Hence
+$$
+\text{Pr}[\mathcal{G}_{v,i}] \ge 1 - \left(1-\frac{1}{\lambda}\right)^{\lambda}
+$$
+Using the standard inequality $(1-p)^x\le e^{-px}$ with $p=1/\lambda$ and $x=\lambda$,
+$$
+\text{Pr}[\mathcal{G}_{v,i}] \ge 1 - e^{-\frac{1}{\lambda}\lambda} = 1 - e^{-1}
+$$
+By the bound $(1-p)^x \le e^{-px}$
+\end{proof}
+
+Two events $\mathcal{G}_{v,i}$ and $\mathcal{G}_{u,i}$ are independent if and only if the sets of edges on which they depend are disjoint:
+$$
+\mathcal{G}_{v,i} \perp \mathcal{G}_{u,i} \Longleftrightarrow \delta(v) \cap\delta(u) =\emptyset
+$$
+That is:
+$$
+\delta(v) \cap\delta(u) = \begin{cases}
+\emptyset \quad\text{independent,} \\
+\{(u,v)\} \quad \text{dependent}
+\end{cases}
+$$
+If $v$ and $u$ are adjacent, the common edge $(u,v)$ affects both events, creating a positive correlation. Knowing that $u$ is relaxed increases the probability that $v$ is also relaxed, since the shared edge may have been selected.
+
+
+
+
+
+\subsubsection{Part B}
+Let $\varepsilon_i$ be the event when the number of vertices $N_i$ in $G_i$ is smaller than or equal to $3/4$ of the previous number of vertices $N_{i-1}.$
+$$
+\text{Pr}[\varepsilon_i] =  \text{Pr}\left[N_i \le N_{i-1}\frac{3}{4}\right]
+$$
+We show that $\text{Pr}[\varepsilon_i] \ge c$ for an absolute constant $c>0$.
+
+\begin{proof}
+By complement and Markov's inequality,
+$$
+\text{Pr}[\varepsilon_i] =  1-\text{Pr}\left[N_i > N_{i-1}\frac{3}{4}\right] \ge 1-\text{Pr}\left[N_i \ge N_{i-1}\frac{3}{4}\right] \ge 1-\frac{\mathbb{E}[N_i]}{\frac{3}{4}N_{i-1}}
+$$
+Thus it suffices to upper bound $\mathbb{E}[N_i]$.
+Let $A_i$ be the number of activated vertices (those incident to at least one sample edge in $S_i$).
+From part (a),
+$$
+\mathbb{E}[A_i]=\sum_{v\in G_{i-1}} \text{Pr}[\mathcal{G}_{v,i}] \ge (1-\frac{1}{e})N_{i-1}
+$$
+The number of vertices removed at each step is the number of components in the graph $H_i=(V_i, S_i)$. This number is upper-bounded by $A_i/2$ which occur when all selected vertices have degree 1. Hence
+$$
+N_i \le N_{i-1}-\frac{A_i}{2}
+$$
+With expectation
+$$
+\mathbb{E}[N_i] \le N_{i-1} - \frac{\mathbb{E}[A_i]}{2} \le \left(1-\frac{1}{2}(1-\frac{1}{e})\right)N_{i-1} = \frac{1+\frac{1}{e}}{2}N_{i-1}
+$$
+Plugging into Markov,
+$$
+\text{Pr}\left[N_i \ge N_{i-1}\frac{3}{4}\right] \le \frac{\frac{1+\frac{1}{e}}{2}N_{i-1}}{\frac{3}{4}N_{i-1}} = \frac{2}{3}\left(1+\frac{1}{e}\right)
+$$
+so
+$$
+\text{Pr}[\varepsilon_i] \ge 1 - \frac{2}{3}\left(1+\frac{1}{e}\right) = \frac{1}{3}-\frac{2}{3e} = c > 0
+$$
+\end{proof}
+
+
+
+
+
+\subsubsection{Part C}
+We show that the number of vertices remaining after $L$ steps is $1$ with high probability:
+$$
+\text{Pr}[N_L = 1] \ge 1 - \frac{1}{\text{poly}(n)}
+$$
+
+\begin{proof}
+Let $X$ denote the total number of \emph{good shrink} steps, that is the number of indices $i\in L$ for which the vertex set shrinks by at leas a factor $\tfrac{3}{4}$:
+$$
+X_i = \begin{cases}
+1 \quad \text{if }N_i \le N_{i-1}\frac{3}{4} \\
+0 \quad \text{otherwise}
+\end{cases}
+\quad \text{ and } \quad
+X = \sum_{i=1}^LX_i
+$$
+Knowing the number of good shrink helps to upper bound the number of remaining vertices
+$$
+N_i \le n \left(\frac{3}{4}\right)^t
+$$
+To ensures that $N_L \le1$ (and therefor exactly $1$ since a graph has a positive number of vertices), it requires
+$$
+n \left(\frac{3}{4}\right)^t \le 1 \Rightarrow t \ge \frac{\log(n)}{\log(4/3)}
+$$
+Define the threshold
+$$
+t_\star := \left\lceil\frac{\log(n)}{\log(4/3)}\right\rceil
+$$
+Thus, having at least $t_\star$ good shrink events guarantees $N_L = 1$:
+$$
+X_L \ge t_\star \Rightarrow N_L = 1
+$$
+
+Applying the Multiplicative Chernoff's bound.
+Let $\mu = \mathbb{E}[X_L]$.
+From part (b), the events $\{\varepsilon_i\}$ are independent, and each occurs with constant probability $c$. hence
+$$
+\mu = \sum_{i=1}^L\text{Pr}[\varepsilon_i] = cL \quad\text{with}\quad c = \frac{1}{3}-\frac{2}{3e}\quad\text{and}\quad L = 100\log n
+$$
+For any $\delta > 0$,
+$$
+\text{Pr}[X_L \le (1-\delta)\mu] \le  \exp\left(-\frac{\delta^2\mu}{2}\right)
+$$
+Set $(1-\delta)\mu = t_\star$ so that the left-hand event corresponds to "fewer than $t_\star$ good shrinks".
+This gives
+$$
+\delta = 1-\frac{t_\star}{cL} \approx 1-\frac{1}{100c\cdot\log(\frac{4}{3})} \approx \frac{cL-1}{cL}
+$$
+Plugging this into the Chernoff bound:
+$$
+\text{Pr}[X_L \le (1-\delta)\mu] \le  \exp\left(-\frac{\delta^2\mu}{2}\right)  = \exp\left(-\frac{\left(\frac{cL-1}{cL}\right)^2cL}{2}\right) = \exp\left(-\Theta(\log n)\right) = n^{-\Theta(1)}
+$$
+
+Finally, with the probability at least $1-n^{-\Omega(1)}$, we have $X_L \ge t_\star$, and therefore $N_L=1$. Hence:
+$$
+\text{Pr}[N_L = 1] = \text{Pr}[N_L \ge 1] - \text{Pr}[N_L \ge 2] = 1 - \text{Pr}[X_L < t_\star] \ge 1 - n^{-\Omega(1)}
+$$
+\end{proof}
+
+
+
+
+
+\subsubsection{Part D}
+Given
+$$
+S = \bigcup_{i=1}^LS_i \quad\text{and}\quad \text{Pr}[e\in S] = 1 -\left(1-\tfrac{1}{\lambda}\right)^L \le \frac{L}{\lambda} =: p
+$$
+We claim that sampling edge of $G$ independently with probability $p:=\tfrac{L}{\lambda}$ yields a connected graph with high probability.
+\begin{proof}
+From part (c), we have shown that with high probability, after $L$ rounds, the remaining graph has a single contracted vertex:
+$$
+N_L = 1 \Rightarrow G \text{ is connected under edges set } S
+$$
+Hence the, the random subgraph $G'=(V, S\subseteq E)$ is connected with probability $1-n^{-\Omega(1)}$.
+
+Now, consider the Erd\H{o}s-R\'enyi random graph $G(p)$, where each edge of $G$ is included independently with probability $p$.
+Since $\text{Pr}[e\in S] \le p$, the distribution of $G'$ is stochastically dominated by $G(p)$. Because de graph connectivity is monotone property, adding edges cannot destroy connectivity:
+$$
+\text{Pr}[G(p) \text{ is connected}] \ge \text{Pr}[G'\text{ is connected}] = 1-n^{-\Omega(1)}
+$$
+
+Therefore, sampling edges of $G$ independently with probability $p=\tfrac{L}{\lambda}$ results in a connected graph with high probability.
+\end{proof}

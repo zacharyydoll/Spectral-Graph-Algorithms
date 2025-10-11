@@ -1,0 +1,68 @@
+\subsubsection{Part A}
+\begin{proof}
+Consider an ordered sequence of $k$ distinct vertices.
+The probability that these vertices form a cycle of length exactly $k$ is the probability that corresponding edges exists, nameley
+$$
+(v_1v_2, v_2v_3, \dots v_kv_1)
+$$
+Hence,
+$$
+\text{Pr}[\textit{sequence of $k$ vertices forms a cycle}]=p^k
+$$
+In a random graph $G=(n,p)$, each cycle of length $k$ corresponds to $2k$ ordered sequences ($k$ possible starting points and $2$ possible directions).
+
+Let $X_k$ denote the number of $k$ exact cycle, The expectation is
+$$
+\mathbb{E}[X_k] = \frac{(n)_k}{2k}p^k = \binom{n}{k}\frac{(k-1)!}{2}p^k
+$$
+
+Since a cycle of lenth at most $l$ can have any lenth $k$ with $3 \le k \le l$, the expected number of such cycles is given by
+$$
+\mathbb{E}[X_{\le l}] = \sum^l_{k=3} \mathbb{E}[X_k]
+$$
+\end{proof}
+
+\subsubsection{Part C}
+\begin{proof}
+Let $M$, $X_{\le l}$ and $Y$ represent respectively the number of edges, the number of cycles of length at most $l$ and the number of edges in the resulting graph.
+Since removing one edge from every cycle suffices to eliminate all cycle, we have
+$$
+Y \ge M - X_{\le l}
+$$
+Taking expectations gives
+$$
+ \mathbb{E}[Y] \ge\mathbb{E}[M]-\mathbb{E}[X_{\le l}]
+$$
+The expected number of edges is
+$$
+\mathbb{E}[M] = \binom{n}{2}p = \left(\frac{1}{2}+o(1)\right)n^2p
+$$
+
+From Part~A, the expected number of short cycles is
+$$
+\mathbb{E}[X_{\le l}] = \sum^l_{k=3} \left(\frac{1}{2k}+o(1)\right)n^kp^k
+$$
+
+Now set
+$$
+p = n^{\frac{2-l}{l-1}}
+$$
+For each $k$,
+$$
+n^kp^k = n^{k+k\frac{2-l}{l-1}}=n^{\frac{k}{l-1}}
+$$
+These terms increase with $k$, so the sum is dominated by $k=l$
+$$
+\mathbb{E}[X_{\le l}] = \left(\frac{1}{2l}+o(1)\right)n^{1+\frac{1}{l-1}}
+$$
+Meanwhile,
+$$
+\mathbb{E}[M] = \left(\frac{1}{2} + o(1)\right)n^{2+\frac{2-l}{l-1}} = \left(\frac{1}{2} + o(1)\right)n^{1+\frac{1}{l-1}}
+$$
+
+Therefore,
+$$
+\mathbb{E}[Y] \ge\mathbb{E}[M]-\mathbb{E}[X_{\le l}] = \left(\frac{1}{2}-\frac{1}{2l}-o(1)\right)n^{1+\frac{1}{l-1}} = \Theta(n^{1+\frac{1}{l-1}})
+$$
+
+\end{proof}

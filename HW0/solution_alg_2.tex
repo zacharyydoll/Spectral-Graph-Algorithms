@@ -1,0 +1,67 @@
+
+
+Given a directed acyclic graph $G=(V, E)$ and a list of lengths $L$, the longest path is defined as a path from a source vertex $s\in V$ to a target $t\in V\textbackslash\{s\}$. Because the graph is acyclic, all edges and vertices on such path are unique.
+The key idea is to compute the longest path starting from each vertex in $V$, and take the maximum over all.
+
+The longest path starting from a vertex $v$ through an outgoing edge $e=(v, w)$ is given by the sum of length $l_e$ and the longest path starting at $w$, denoted $w^*$.
+Thus, the longest path starting at $v$ is expressed as:
+$$\max_{e\in E_v}(l_e + w^*)$$
+where $E_v$ is the set of edges outgoing of $v$.
+The algorithm~\ref{code:DFS} implements this idea.
+
+The algorithm uses a map $S$ that stores the maximum path length for each vertex, thereby avoiding redundant computations.
+It is \textbf{DFS-based}, since a vertex's longest path is determined only after exploring all of its neighbors.
+The base case is 0, because if no outgoing edge or only negative paths are available, the longest path is to terminates at that vertex.
+\begin{algorithm}
+\caption{DFS-based algorithm to get the maximum path length from vertex}\label{code:DFS}
+\begin{algorithmic}
+\Procedure{DFS-max-length}{G, v, L, S}
+\If{$S[v]$ is $NaN$}
+    \State $S[v] \gets 0$
+    \For{$(v, w) \gets e\in E_v$}
+        \State $S[v] \gets \max(S[v], L_e + \textsc{DFS-max-length}(G, w, L, S))$
+    \EndFor
+\EndIf
+\State \Return $S[v]$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+The longest path of the graph $G$ is given by:
+$$\max_{v\in V}(v^*)$$
+Where $v^*$ denotes the longest path starting from $v$.
+The method Maximum-path-length~\ref{code:MaxLength} computes the maximum by looping over all vertices.
+This ensures that every vertex is computed, even if the graph is not connected.
+For the dynamic programming implementation, the array $S$ is initialized to $NaN$, and a variable $m$ is used to store the current maximum.
+
+\begin{algorithm}
+\caption{Maximum path length}\label{code:MaxLength}
+\begin{algorithmic}
+\Procedure{Max-path-length}{G, L}
+\State $S\gets [NaN] \forall v\in V$
+\State $m \gets -\infty$
+\For{$v \in V$}
+    \State $m \gets \max(m, \textsc{DFS-max-length}(G, v, L, S))$
+\EndFor
+\State \Return $m$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Since every vertex is computed exactly once due to dynamic programming and the loop, the algorithm performs $O(|V|)$ at vertex-level operations.
+At each vertex, the work consists of iterating over outgoing edges ($O(E_v)$).
+Because all vertices are processed, every edge of the graph is considered exactly once, since:
+$$\bigcup_{v\in V} E_v = E$$
+Thus, the total complexity is linear to the size of the graph $O(|V| + |E|)$.
+
+As the graph $G$ is acyclic, this bound can also be expressed as being linear in the number of edges. To illustrate this, consider two extreme cases (excluding isolated vertices):
+\begin{itemize}
+    \item \textbf{Sparse case}: Suppose the graph consists of disjoint pairs of vertices connected by a single edge. Then $|V| = 2|E|$. Substituting into the formula gives
+    $$O(|V| + |E|)=O(2|E| + |E|)=O(3|E|)=O(|E|)$$
+    \item \textbf{Dense case}: Suppose every vertex has edges to all vertices that follow it in a topological ordering. Then:
+    $$|E| = |V|\frac{(|V|-1)}{2} \Rightarrow |E|\ge|V|$$
+    Substituting into the expression:
+    $$O(|V| + |E|)=O(|E| + |E|)=O(2|E|)=O(|E|)$$
+\end{itemize}
+
+Therefore, in both extremes, the algorithm runs in time $O(|E|)$, linear in the number of edges.

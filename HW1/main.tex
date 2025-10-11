@@ -1,0 +1,212 @@
+ \documentclass[11pt,a4paper,twoside]{article}
+
+\newcommand{\assignment}{Homework 1 Solutions}
+\newcommand{\studentone}{Barras Simon <simon.barras@epfl.ch>}
+\newcommand{\studenttwo}{Doll Zachary <zachary.doll@epfl.ch>} % Comment out if there is no second student
+%\newcommand{\studentthree}{Student 3 name + email} % Comment out if there is no third student
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo}
+
+\usepackage{amsmath,amssymb,amsfonts}
+
+\usepackage{nicefrac}
+
+\newcommand{\nf}{\nicefrac}
+
+\usepackage[backref,colorlinks,citecolor=blue,bookmarks=true]{hyperref}
+
+\usepackage[shortlabels]{enumitem}
+\newlist{alphenum}{enumerate}{2}
+\setlist[alphenum]{label=(\alph*),beginpenalty=10000}
+
+\newlist{menum}{enumerate}{2}
+\setlist[menum]{label=(\arabic*),beginpenalty=10000}
+
+\usepackage[hmargin=2.8cm,top=2.8cm,bottom=3.5cm,nohead,footskip=48pt]{geometry}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Claim}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\usepackage{bm}
+
+\parindent0pt
+\parskip1ex
+
+% reset mathcal fonts to detault
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\makeatletter
+\newcommand{\header}{%
+\mbox{}
+\vspace*{-1.8cm}
+\par
+\parbox[b]{13.1cm}{\raggedright
+    {\large\bfseries Topics in Theoretical Computer Science: Randomized Algorithms}\\[.5ex]    
+    EPFL, Fall semester, 2025 \\[2ex]
+}%
+%\parbox[b]{4.3cm}{\hspace*{0pt}\fbox{\includegraphics[width=4.3cm]{RSP-LEO-logo.pdf}}}%
+
+  
+\vspace*{-.3cm}
+
+\rule{\textwidth}{.5pt}
+\vspace*{-.2cm}
+
+{\Large\bfseries \assignment } \\[2ex]
+{\large \studentone \\[1ex]
+\@ifundefined{studenttwo}{}{
+    \studenttwo \\[1ex]
+}
+\@ifundefined{studentthree}{}{
+    \studentthree \\[1ex]
+}
+}
+\vspace*{-0.5cm}
+
+\rule{\textwidth}{.5pt}
+
+\vspace*{-.3cm}
+
+}
+\makeatother
+
+
+\begin{document}
+
+\header
+
+% SORTING ALMOST CORRECT SORTING
+% SUBMODULAR PORTFOLIO OPTIMIZATION
+% WHY STRAIGHTFORWARD USE OF PREDICTIONS IS DANGEROUS (SCHEDULING OR CACHING)
+% MECHANISM DESIGN ON THE LINE?
+
+
+
+\section{Problem 1 (Lonely Vertices)}
+Consider the Erd\H{o}s-R\'enyi random graph
+$G(n,p)$ and suppose $\epsilon > 0$ is some constant. Show that:
+\begin{alphenum}
+    \item if $p \geq \frac{(1+\epsilon)\ln n}{n-1}$ then the graph has at no
+    isolated vertices with probability $1-o(1)$.
+    \item if $p \leq \frac{(1-\epsilon)\ln n}{n-1}$ then the graph has at
+    least one isolated vertex with probability $1-o(1)$.
+\end{alphenum}
+
+\subsection{Solution}
+\input{solution_1.tex}
+
+\section{Problem 2 (Cutting it Fine)}
+Given a connected undirected (and unweighted,
+for simplicity) $n$-vertex graph $G$, a $k$-cut is a paritition of
+the vertex set into $k$ non-empty parts $S_1, S_2, \ldots, S_k$. The
+size of the $k$-cut is the number of edges that cross between
+distinct parts in this partition. Consider the following algorithm:
+\begin{itemize}
+    \item (Phase 1) As long as the number of vertices in $G$ is more
+          than $2k-2$, pick a random edge and contract it.
+    \item (Phase 2) Now we have a graph on $2k-2$ vertices. For each of
+          these vertices, choose a random label from
+          $\{L_1,L_2,\ldots, L_k\}$, contract vertices with the same label,
+          and output the resulting cut.
+\end{itemize}
+Show the following:
+\begin{alphenum}
+    \item If the min $k$-cut size is $\lambda$, then
+    $\lambda \leq 2(k-1)\frac{m}{n}$.
+    \item Any fixed min $k$-cut survives the first phase with
+    probability at least $1/{n \choose {2(k-1)}}$.
+    \item Conditioned on surviving the first phase, it is output in the
+    second phase with probability at least
+    $\frac{k!}{k^k}\cdot \frac{1}{k^{k-2}}$.
+\end{alphenum}
+Hence, this gives an $\approx n^{2(k-1)}$-time algorithm for the
+$k$-cut problem.
+
+
+
+\subsection{Solution}
+\input{solution_2.tex}
+
+\section{Problem 3 (Cyclic Changes)}
+An $\ell$-cycle in a graph is a cycle with \emph{at
+    most} $\ell$ nodes. In this problem, we want to show there exist
+graphs with many edges, and no \emph{short} cycles. It is easy to
+construct such graphs with $\Omega(n)$ edges---in fact, a tree has
+$n-1$ edges and no cycles at all!  We want slightly denser graphs
+with no $\ell$-cycles for any constant $\ell$.
+\begin{alphenum}
+    \item Consider the graph $G(n, p)$ for some $p \in [0,1]$. Calculate
+    the probability that some sequence of $\ell$ vertices is a cycle,
+    and hence calculate the expected number of $\ell$-cycles.
+
+    \item (Do not submit.) Note that setting $p \approx 1/n$ means the
+    expected number of $\ell$-cycles is $o(1)$, but the expected
+    number of edges is $O(n)$---which is not very interesting!
+
+    \item Now consider the following two part algorithm: (i) first pick
+    $G \sim G(n,p)$, and then (ii) for each $\ell$-cycle in $G$,
+    delete an arbitrary edge on it. By construction this graph has no
+    $\ell$-cycles. Show that setting $p = n^{\frac{2 - \ell}{\ell-1}}$
+    ensures that the expected number of edges in the resulting graph
+    is $m := \Theta(n^{1 + \frac{1}{\ell-1}})$. Hence, infer that there exist
+    graphs with $m = \omega(n)$ edges and no $\ell$-cycles.
+\end{alphenum}
+
+
+
+
+\subsection{Solution}
+\input{solution_3.tex}
+
+\section{Problem 4 (Random 3-SAT)}
+ (Taken from Johan H\aa stad's course ``Theoreticians toolkit''
+ at KTH.) Constructing a random 3-SAT formula with n variables and
+$m = \lceil dn \rceil$ (remember that $\lceil x \rceil$ is the
+smallest integer larger than x) clauses is done in the following
+way. Randomly take three different variables (all triples being
+equally likely). With uniform probability choose one of the eight
+ways to negate these variables and make them into a clause. Repeat
+with independent randomness until you have $m$ clauses.
+
+\begin{alphenum}
+    \item For what value of $d$ is the expected number of satisfying
+    assignments $\Theta(1)$?  Call this value $d_0$.
+
+    \item Prove that the formula is likely (probability $1-o(1)$) to be
+    unsatisfiable for any constant $d$ such that $d > d_0$.
+    \item \textbf{(Extra Credit.)} Prove that the formula remains at least somewhat likely to be
+    unsatisfiable also in the case when $d$ is slightly smaller than
+    $d_0$. The difficulty of this problem is very much dependent on
+    what we mean by ``somewhat likely'' and ``slightly smaller''. The
+    exact formulation to prove to get a full score on this problem is
+    that there is some constant $d_1 < d_0$ such that for $d = d_1$
+    the probability that the corresponding random formula is
+    satisfiable is at most $1/2$. The size of $d_0 - d_1$ does not
+    matter for your score on the problem and the main property of a
+    solution to aim for is a mathematically correct argument.
+    \emph{Hint:} A satisfiable formula that does not depend on all its
+    variables has many satisfying assignments.
+
+    % As a curiosity we may note that the value of $d$ such that such
+    % a formula has probability around $1/2$ of being satisfiable is
+    % not known but conjectured to be around $4.2$.
+\end{alphenum}
+
+
+\subsection{solution}
+\input{solution_4.tex}
+
+
+\end{document}

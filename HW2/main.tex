@@ -1,0 +1,288 @@
+\documentclass[11pt,a4paper,twoside]{article}
+
+\newcommand{\assignment}{Homework 2 Solutions}
+\newcommand{\studentone}{Barras Simon <simon.barras@epfl.ch>}
+\newcommand{\studenttwo}{Doll Zachary <zachary.doll@epfl.ch>} % Comment out if there is no second student
+%\newcommand{\studentthree}{Student 3 name + email} % Comment out if there is no third student
+
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo}
+
+\usepackage{amsmath,amssymb,amsfonts}
+
+\usepackage{nicefrac}
+
+\newcommand{\nf}{\nicefrac}
+
+\usepackage[backref,colorlinks,citecolor=blue,bookmarks=true]{hyperref}
+
+\usepackage[shortlabels]{enumitem}
+\newlist{alphenum}{enumerate}{2}
+\setlist[alphenum]{label=(\alph*),beginpenalty=10000}
+
+\newlist{menum}{enumerate}{2}
+\setlist[menum]{label=(\arabic*),beginpenalty=10000}
+
+\usepackage[hmargin=2.8cm,top=2.8cm,bottom=3.5cm,nohead,footskip=48pt]{geometry}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Claim}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+
+\usepackage{bm}
+
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\R}{\mathbb{R}}
+
+\parindent0pt
+\parskip1ex
+
+% reset mathcal fonts to detault
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\makeatletter
+\newcommand{\header}{%
+\mbox{}
+\vspace*{-1.8cm}
+\par
+\parbox[b]{13.1cm}{\raggedright
+    {\large\bfseries Topics in Theoretical Computer Science: Randomized Algorithms}\\[.5ex]    
+    EPFL, Fall semester, 2025 \\[2ex]
+}%
+%\parbox[b]{4.3cm}{\hspace*{0pt}\fbox{\includegraphics[width=4.3cm]{RSP-LEO-logo.pdf}}}%
+
+  
+\vspace*{-.3cm}
+
+\rule{\textwidth}{.5pt}
+\vspace*{-.2cm}
+
+{\Large\bfseries \assignment } \\[2ex]
+{\large \studentone \\[1ex]
+\@ifundefined{studenttwo}{}{
+    \studenttwo \\[1ex]
+}
+\@ifundefined{studentthree}{}{
+    \studentthree \\[1ex]
+}
+}
+\vspace*{-0.5cm}
+
+\rule{\textwidth}{.5pt}
+
+\vspace*{-.3cm}
+
+}
+\makeatother
+
+
+\begin{document}
+
+\header
+
+% SORTING ALMOST CORRECT SORTING
+% SUBMODULAR PORTFOLIO OPTIMIZATION
+% WHY STRAIGHTFORWARD USE OF PREDICTIONS IS DANGEROUS (SCHEDULING OR CACHING)
+% MECHANISM DESIGN ON THE LINE?
+
+
+
+\section{Problem 1 (Only Connect!)}
+
+Given an undirected (unweighted) graph
+$G = (V,E)$, let $G(p)$ be the random graph where we retain each
+edge of $G$ independently with probability $p$.  In lecture \#4, we
+saw that setting $p \geq c \frac{\log n}{\lambda}$, where $\lambda$
+is the min-cut value in $G$, the graph $G(p)$ is a cut-approximator
+for $G$ with probability $1 - o(1)$. In particular, we get the
+simpler fact: if $G$ is connected, then $G_p$ is also connected
+whp. Let's prove this simpler fact in a different way that does not
+use the cut-counting lemma. Consider the following process:
+
+\begin{quote}
+    Initialize $G_0 = G$, and define $L = 100 \log n$. For each
+    $i = 1, 2, \ldots, L$, let $S_i$ be a set where we pick each edge
+    in $G_{i-1}$ independently with probability $1/\lambda$. Contract
+    all the edges from $S_i$ in the graph $G_{i-1}$ (and remove
+    self-loops) to get $G_{i}$.
+\end{quote}
+
+Analyze it as follows:
+
+\begin{alphenum}
+
+    \item For any vertex $v$ in $G_{i-1}$, let $\calG_{v,i}$ be the
+    event that the set $S_i$ contains at least one edge incident to
+    $v$. Show that $\Pr[\calG_{v,i}] \geq 1 - \nf1e$. Btw, are
+    $G_{v,i}$ and $G_{u,i}$ independent?
+
+    \item Let $N_i$ be the number of vertices in $G_i$, so that
+    $N_0 = n$. Define the event $\calE_i$ if
+    $N_i \leq N_{i-1}\cdot \nf34$. Show that $\Pr[\calE_i] \geq c$,
+    for some absolute constant $c > 0$.
+
+    \item Use a Chernoff bound to show that $|N_L| = 1$ with probability
+    at least $1-1/\text{poly}(n)$. Please clearly state what random
+    variables are you summing over, and why they are independent and
+    bounded.
+
+    \item Finally, define $S = \cup_{i = 1}^L S_i$, and note that each
+    edge in $G$ belongs to $S$ with probability at most $L/\lambda$.
+    Infer that sampling each edge of $G$ with probability $p := L/\lambda$ gives us a connected graph with high probability.
+\end{alphenum}
+
+\subsection{Solution}
+\input{solution_1.tex}
+
+\section{Problem 2 (Nearly Orthonormal Vectors)}
+Call a set of unit vectors
+``near-orthonormal'' if the inner product of any two of them is close
+to zero. In this problem we will show that while there are at most $d$
+orthonormal vectors in $\R^d$, there can be \underline{exponentially} many
+near-orthonormal vectors! For vectors $x,y \in \R^d$, we use $\langle
+    x,y \rangle = \sum_{i = 1}^d x_iy_i$ to denote the inner product.
+
+\begin{alphenum}
+    %   \item[(a)] Use the Chernoff-Hoeffding bound for $[0,1]$-r.v.s from
+    %     Lecture~\#18 to prove the following concentration bound for $\{+1,
+    %     -1\}$-r.v.s.  Let $Y_1, Y_2, \ldots, Y_n$ be independent and
+    %     identical $\{-1,+1\}$-valued random variables, each $Y_i = 1$ with
+    %     probability $1/2$ and $Y_i = -1$ w.p. $1/2$. Let $Y = \sum_{i = 1}^n
+    %     Y_i$. Prove that for $\lambda \leq n$,
+    %     \[ \Pr[ |Y| \geq \lambda ] \leq 2\exp\left( - \frac{ \lambda^2 }{ 6n
+    %       } \right) \]
+
+    %     \answer{Define $X_i = \frac{1 + Y_i}{2}$, and $X = \sum_i X_i$. Then
+    %       $Y_i = 2X_i - 1$.  Clearly, these $X_i$'s are $n$ independent
+    %       $\{0,1\}$-valued r.v.s with $E[X_i] = 1/2$, and
+    %       \[ \Pr[ |\sum_i Y_i| \geq \lambda ] = \Pr[ |\sum_i X_i - n/2 |
+    %       \geq \lambda/2 ]. \] Now we can apply Hoeffding's bound to get
+    %       that the probability
+    %       \begin{align*}
+    %         \Pr[ |\sum_i Y_i| \geq \lambda ] &= 
+    %         \Pr[ \sum_i X_i - n/2 \geq \lambda/2 ] +
+    %         \Pr[ \sum_i X_i - n/2 \leq -\lambda/2 ] \\
+    %         & \leq \exp\left( - \frac{(\lambda/2)^2}{2(n/2) + \lambda}\right)
+    %         + \exp \left( - \frac{(\lambda/2)^2}{3(n/2)}\right) \\
+    %         & \leq 2 \exp( - \lambda^2/(6n)).
+    %       \end{align*}
+    %     }
+
+    \item Let $x = (x_1, x_2, \ldots, x_d)$ and $y = (y_1, y_2,
+        \ldots, y_d)$ be two independently and uniformly chosen vectors in
+    $\{-1,1\}^d$.  (I.e., each bit $x_i$ and $y_i$ in each vector is
+    independently and uniformly chosen from $\{-1,1\}$.) Show that
+    \[ \Pr[ | \langle x,y \rangle | \geq \varepsilon d ] \leq 2 \exp \left( -
+        \varepsilon^2 d/6 \right) \]
+    % (Hint: derive a concentration bound for $\{-1, +1\}$-valued random
+    % variables from the main concentration bound in Lecture~\#18.)
+
+    \item Given parameter $\varepsilon > 0$, a set $S$ of unit vectors is
+    called \emph{$\varepsilon$-orthonormal} if for all $\vec{x}, \vec{y} \in S$,
+    \[ |\langle \vec{x}, \vec{y} \rangle| \leq \varepsilon . \] %  $\|
+    %     \vec{u} \|$ is the Euclidean norm.
+
+    %     Here's one way to construct such a set $S$.
+    Show that there exists a constant $c > 0$ and constant $d_0$, such that for any
+    $\varepsilon \leq 1/2$ (say) and any $d \geq d_0$, if you sample
+    $N := \exp(c\varepsilon^2 d)$ random vectors independently
+    and uniformly from the set
+    $\{-\frac{1}{\sqrt{d}},+\frac{1}{\sqrt{d}}\}^d$, this sampled set
+    is $\varepsilon$-orthonormal with probability at least $1/2$.
+
+    % \item Let $S$ be any set of \emph{$\varepsilon$-orthonormal}
+    %   vectors. For any $x \in \R^d$, define the ball
+    %   \[ B(x,r) := \{y \mid \| x - y \|_2 \leq r\}. \]
+    %   \begin{enumerate}
+    %   \item Prove: the Euclidean distance between any two points in $S$
+    %     lies in $[\sqrt{2(1-\e)}, \sqrt{2(1+\e)}]$. Hence for any point
+    %     $x_0 \in S$, the entire set lies in $S \sse B(x_0, \sqrt{2(1+\e)})$.
+    %   \item For any $x \neq y \in S$, show that $B(x, \sqrt{(1-\e)/2})
+    %     \cap B(y, \sqrt{(1-\e)/2}) = \emptyset$.
+    %   \item
+    %   \end{enumerate}
+
+\end{alphenum}
+
+
+\subsection{Solution}
+\input{solution_2.tex}
+
+\section{Problem 3 (Packet Scheduling with Randomized Delays)}
+
+
+We consider the problem of routing $k$ packets in a network, where
+packet $i$ goes from $s_i$ to $t_i$, along a fixed $s_i$-$t_i$ path
+$P_i$. (These paths may be chosen, e.g., using randomized rounding as seen in class, or
+some other approach---but this does not matter for us.)
+% seen in class).
+We assume a synchronous model where time proceeds in discrete steps
+($t=0, 1, 2, \dots$). For feasibility, each edge should be used by at
+most one packet per timestep. Define two key parameters based on the given paths:
+\begin{itemize}
+    \item \textbf{Congestion ($C$)}: The maximum number of paths $P_i$
+          that use any single edge.
+    \item \textbf{Dilation ($D$)}: The maximum length (number of
+          edges) of any path $P_i$.
+\end{itemize}
+
+In the \emph{na\"{\i}ve schedule}, packet $i$ tries to cross the
+$j^{th}$ edge of $P_i$ at time $j$. This takes time at most $D$ to
+complete, but could be infeasible: as many as $C$ packets may try to use an
+edge at the same time. Let us see how to get schedules which take slightly
+longer to complete, but have less congestion.
+
+
+Consider the following randomized approach for defining a
+\emph{nominal schedule}.
+% This schedule ignores the real-world constraint that only one packet can cross an edge at a time (i.e., it assumes infinite edge capacity), but our goal is to show that this nominal schedule has low congestion with high probability.
+\begin{enumerate}
+    \item[] \textbf{Random Delay:} Each packet $i$ independently chooses an initial integer delay $\Delta_i$ uniformly at random from the set $\{0, 1, 2, \dots, C\}$. (Note: There are $C+1$ choices.)
+    \item[] \textbf{Nominal Schedule:} Suppose path $P_i=(e_{i,1}, e_{i,2}, \dots)$. In the nominal schedule, packet $i$ crosses edge $e_{i,j}$ at time $\Delta_i + j$.
+\end{enumerate}
+%\vspace{0.1in}
+I.e., each packet waits for a random amount $\Delta_i$, and then moves
+one edge per timestep after that. Of course, this may still cause
+packets to use an edge at the same time. Define the \emph{nominal
+    congestion} $X_{e,t}$ as the number of packets whose nominal
+schedule requires them to cross edge $e$ at time $t$. We want to show
+that the maximum nominal congestion is small:
+\begin{alphenum}
+    \item Argue that $X_{e,t}$ is a sum of independent random variables,
+    and use a Chernoff bound plus union bound to show that with high
+    probability, the maximum nominal congestion
+    $R_{\max} = \max_{e,t} X_{e,t}$ is $O(\log(k\cdot D\cdot C))$.
+    %   \item Use the Lov\'asz Local Lemma to find a schedule where the
+    %         maximum nominal congestion $R_{\max} = \max_{e,t} X_{e,t}$ is
+    %         $O(\log(D\cdot C))$; note that we do not have a dependence on $k$
+    %         any more.
+    %   \item We have taken the trivial schedule where \alert{Complete this}
+\end{alphenum}
+
+
+\bigskip
+\emph{Remark:} Starting with the nominal schedule, greedily scheduling the packets (where packets wait if an edge is busy) can be shown to result in a schedule length bounded using this result for $R_{\max}$, specifically $O(C + D \cdot R_{\max})$. This result is relatively close to the lower bound $\max(C, D)$. A landmark result by Leighton, Maggs, and Rao (1988) used a much more powerful probabilistic tool, the Lovász Local Lemma (which we will cover in lecture \#5), to prove that there exists a choice of delays such that the schedule length is $O(C+D)$. This is a constant factor approximation of the optimal schedule.
+
+
+
+
+
+
+\subsection{Solution}
+\input{solution_3.tex}
+
+
+\end{document}

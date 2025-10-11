@@ -1,0 +1,109 @@
+\subsection{Part A}
+
+\begin{proof}
+
+Let $X_i = x_i y_i$. Because each bit $x_i$ and $y_i$ are chosen uniformly and independently, it follows that $X_1, ..., X_d$ are iid Rademacher random variables. Define 
+$$X = \sum_{i=1}^d X_i = \langle \vec{x}, \vec{y}\rangle $$
+
+By direct computation:
+
+$$M_{X_i}(\lambda) = \mathbb{E}\left[e^{\lambda X_i}\right] = \mathbb{P}[X_i = 1]e^\lambda + \mathbb{P}[X_i = -1]e^{-\lambda} = \frac{1}{2}(e^\lambda + e^{-\lambda}) = \cosh \lambda$$
+
+Because the $X_i$ are iid variables, we have
+
+$$M_X(\lambda) = \prod_{i=1}^dM_{X_i}(\lambda) = \left(M_{X_i}(\lambda)\right)^ d = (\cosh \lambda)^d$$
+
+Furthermore, the Taylor expansion of $\cosh \lambda$ yields the following inequality:
+
+$$\cosh \lambda = 1 + \frac{\lambda^2}{2!} + \frac{\lambda^4}{4!} + \ ... \ \le \sum_{k\ge 0} \frac{(\lambda^2/2)^k}{k!} = e^{\lambda^2/2}$$
+
+Thus:
+
+$$M_X(\lambda) = (\cosh \lambda)^d \le e^{\lambda^2d/2}$$
+By Markov, we get that
+
+$$\mathbb{P}[X \ge a] \le \frac{\mathbb{E}\left[ e^{\lambda X}\right]}{e^{\lambda a}} = M_X(\lambda)e^{-\lambda a}, \ \forall \lambda > 0$$
+
+Using our bound for the MGF yields
+
+$$\mathbb{P}[X \ge a] \le \exp\left( -\lambda a + \frac{\lambda^2d}{2}\right)$$
+
+We can optimize this expression over $\lambda$:
+
+$$\frac{d}{d\lambda}\left( -\lambda a + \frac{\lambda^2d}{2}\right) = 0 \Longrightarrow \tilde{\lambda} = \frac{a}{d}$$
+
+It follows that
+
+$$\mathbb{P}[X \ge a] \le \exp\left( -\tilde\lambda a + \frac{\tilde\lambda^2d}{2}\right) = \exp\left( -\frac{a^2}{2d}\right)$$
+
+By using the same bound for $-X$ and taking the union bound,
+
+$$\mathbb{P}[|X| \ge a] \le 2 \exp\left( -\frac{a^2}{2d}\right)$$
+
+Finally, setting $a = \varepsilon d$ gives
+
+$$\mathbb{P}\left[|\langle x,y\rangle | \ge \varepsilon d\right] \le 2\exp\left( \frac{-\varepsilon^2d}{2}\right)$$
+
+Which relaxes to 
+
+$$
+\mathbb{P}\left[|\langle x,y\rangle | \ge \varepsilon d\right] \le 2\exp\left( \frac{-\varepsilon^2d}{6}\right)
+$$
+
+\end{proof}
+
+
+
+\subsection{Part B}
+
+\begin{proof}
+
+    Let $\varepsilon \in ]0,\tfrac{1}{2}[$, and sample $N = \exp(c\varepsilon^2d)$ vectors $u^{(1)},...,u^{(N)}$ iid and uniformly from the discrete set $\{\pm 1/\sqrt{d}\}^d$. Consider a fixed pair of these sampled vectors $\left( u^{(i)}, u^{(j)}\right)$ with $i \ne j$. We have:
+
+    $$ 
+    \langle u^{(i)}, u^{(j)} \rangle = \sum_{k=1}^d u^{(i)}_k u^{(j)}_k = \frac{1}{d} \sum_k X_k
+    $$
+
+    Where $X_k$ are iid Rademacher variables. Consider vectors $x$ and $y$ sampled uniformly from $\{-1,1\}$, as in part $a)$. From our results in part $a)$, we get that
+    
+    $$
+    \begin{equation}\label{eq:pairbound}
+    \langle u^{(i)}, u^{(j)} \rangle = \frac{1}{d} \langle x,y \rangle \Longrightarrow \mathbb{P}\left[ | \langle u^{(i)}, u^{(j)} \rangle | \ge \varepsilon \right] = \mathbb{P}\left[ | \langle x, y \rangle | \ge \varepsilon d\right] \le 2 \exp\left(- \frac{\varepsilon^2 d}{6} \right)
+    \end{equation}
+    $$
+
+    Let $G_{ij}$ be the event that the desired bound holds for two fixed pair of sampled vectors, and $G$ the even that the desired bound holds for all pairs:
+    $$
+    G_{ij} = \{ | \langle u^{(i)}, u^{(j)} \rangle | \le \varepsilon\}, 
+    \quad G = \bigcap_{i \ne j} G_{ij}.
+    $$
+    
+    Union bounding over all $\begin{pmatrix}N \\ 2 \end{pmatrix}$ pairs of vectors in \ref{eq:pairbound} yields:
+
+    $$
+    \begin{align*}
+    \mathbb{P}(G^C) &\le \mathbb{P}\left[ \bigcup_{i\ne j}G_{ij}^C\right] \\
+    &= \mathbb{P}\left[ \exists i \ne j : | \langle u^{(i)}, u^{(j)}\rangle | \ge \varepsilon\right] \\
+    &\le \begin{pmatrix}N \\ 2 \end{pmatrix} \cdot 2\exp\left(- \frac{\varepsilon^2 d}{6} \right) \\
+    &\le \frac{N^2}{2} \cdot 2\exp\left(- \frac{\varepsilon^2 d}{6} \right) \\
+    &= \exp\left[ \left(2c - \frac{1}{6}\right)\varepsilon^2 d\right]
+    \end{align*}
+    $$
+
+    We notice that it suffices to pick $c < 1/12$ for the exponent to become negative. In what follows, we shall consider $c = 1/24 < 1/12$ for simplicity. Furthermore, the case $N < 2$ trivially yields an $\varepsilon$-orthonormal set, as in that case, we do not have any two pairs of sampled vectors. Thus, we shall consider the case:
+    
+    $$
+    N \ge 2 \Longrightarrow \exp(c\varepsilon^2 d) \ge 2 \Longleftrightarrow \varepsilon^2 d \ge \frac{\log 2}{c}
+    $$
+
+    In which case our above bound becomes, with $c = 1/24$:
+
+    $$
+    \mathbb{P}(G^C) \le \exp\left[ \left(2c - \frac{1}{6}\right)\varepsilon^2 d\right] \le \exp\left[ \left(2c - \frac{1}{6}\right)\frac{\log2}{c}\right] =2^{2- \frac{1}{6c}} = 2^{2-4} = \frac{1}{4}
+    $$
+
+    Thus, taking the complement, we get that the probability that the bound holds for all pairs $\left( u^{(i)}, u^{(j)}\right)$ is:
+
+    $$\mathbb{P}(G) = 1 - \mathbb{P}(G^C) \ge 1 - \frac{1}{4} = \frac{3}{4} \ge \frac{1}{2}$$
+
+\end{proof}

@@ -1,0 +1,47 @@
+\subsection{Part A}
+
+Let us fix a truth assignment $ \alpha \in \mathcal{A} = \{ 0,1\}^n$. Any $3$-clause is unsatisfied under assingment $\alpha$ if and only if all 3 literals in the clause are false under $\alpha$. 
+
+Since all 3 variables in the clause are distinct and are each negated independently, it follows that for any 3-clause:
+
+$$P[\text{clause unsatisified under } \alpha] = \left(\frac{1}{2}\right)^3 = \frac{1}{8}$$
+
+And thus
+$$P[\text{clause satisfied under } \alpha] = 1 - \frac{1}{8} = \frac{7}{8}$$
+
+Under the assumption of clause independence, the probability that a 3-SAT $\Psi$ of $m$ clauses evaluates to true under $\alpha$ is therefore 
+
+$$P[\alpha \text{ satisfies } \Psi] = \left( \frac{7}{8}\right)^m$$
+
+Let $X$ be the number of assignments satisfying the statement $\Psi$ and let $\mathbb{I}_\alpha$ be the indicator variable that the truth assignment $\alpha$ satisfies $\Psi$:
+
+$$X = \sum_{\alpha \in \mathcal{A}} \mathbb{I}_\alpha \Longrightarrow \mathbb{E}[X] = \sum_{\alpha \in \mathcal{A}} \mathbb{E}[\mathbb{I}_\alpha] = 2^n \left(\frac{7}{8}\right)^m$$
+
+By hypothesis, $m = \lceil dn\rceil \approx dn$. Thus:
+
+$$\mathbb{E}[X] \approx 2^n\left( \frac{7}{8}\right)^{dn} = \exp \left[ n(\log2 + d \log(7/8))\right]$$
+
+And for $\mathbb{E}[X] = \Theta(1)$, we must therefore have 
+
+$$\log2 + d\log(7/8) = 0 \Longleftrightarrow d = -\frac{\log2}{\log(7/8)} = \frac{\log2}{\log(8/7)} \stackrel{\triangle}{=} d_0$$
+
+
+
+\subsection{Part B}
+\begin{proof}
+Markov's inequality directly yields:
+
+$$
+\begin{align*}P[X \ge 1] \le \mathbb{E}[X] &\stackrel{\star}{=} \exp\left[ n\left( \log2  + d \log(7/8)\right) + o(n)\right] \\
+&= \exp\left( -\Theta(n)\right), \ \forall d < d_0
+\end{align*}$$
+
+Where we used the result from part $a$ in the second equality. It obviously follows that, for all $d < d_0$, we have:
+
+$$\mathbb{E}[X] = \exp\left( -\Theta(n)\right) \stackrel{n\rightarrow\infty}{\longrightarrow} 0$$
+
+And thus
+
+$$P[\Psi \text{ satisifable}] = P[X \ge 1] = o(1) \Longleftrightarrow P[X < 1] = 1 - o(1)$$
+\end{proof}
+

@@ -1,0 +1,76 @@
+
+
+The naive way to count the number of inversions needed to transform an unsorted array into a sorted one is to modify the bubble sort algorithm.
+This sorting algorithm is based on swapping elements, so we can add a counter that increments every time a swap occurs.
+The pseudo-code~\ref{code:bubbleSort} has been modified to count the number of inversions.
+
+The problem with this solution is that the time complexity of the bubble sort is $\Theta(n^2)$, whereas the desired complexity is $\Theta(n \log n)$.
+This complexity suggests that the algorithm we are looking for cannot be asymptotically faster than a standard sorting algorithm.
+The solution is therefore to modify the merge sort algorithm to count the number of inversions.
+
+The intuition is as follows: Whenever an element from the right subarray is placed before an element from the left subarray during merging, it forms an inversion with each of the remaining elements in the left subarray.
+The total number of swaps required to sort the array is the sum of the swaps at the current step plus those from the two subarrays.
+The method Merge-and-count (algorithm~\ref{code:MergeAndCount}) implements this idea by counting how many swaps are needed whenever an element from the right subarray is placed before elements from the left subarray.
+In Counting-merge-sort (algorithm~\ref{code:CountingMergeSort}), the total number of swaps is obtained by summing the swaps from the current step with those from the recursive calls.
+\begin{algorithm}
+\caption{Merge and count number of inversions}\label{code:MergeAndCount}
+\begin{algorithmic}
+\Procedure{Merge-and-count}{Left, Right}
+\State $l, r \gets 0$
+\State $Sorted \gets []$
+\State $swaps \gets 0$
+\While{$ l \le Left_{length} \text{ and } r \le Right_{length}$}
+    \If{$Left[l] \leq Right[r]$}
+        \State append $Left[l]$ to $Sorted$
+        \State $l\gets l + 1$
+    \Else
+        \State append $Right[r]$ to $Sorted$
+        \State $r\gets r + 1$
+        \State $swaps \gets Left_{length} - l$ \Comment{Swapped with the remaining elements in Left}
+    \EndIf
+\EndWhile
+\State append $Left[l:]$ to $Sorted$
+\State append $Right[r:]$ to $Sorted$
+\State \Return $Sorted, swaps$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Merge-sort with counting modification}\label{code:CountingMergeSort}
+\begin{algorithmic}
+\Procedure{Counting-merge-sort}{A}
+\State $swaps \gets 0$
+\If {$\text{length of } A$ > 1} \Return A, 0
+\State $m \gets \frac{\text{length of} A}{2}$
+\State $Left \gets \textsc{Counting-merge-sort}(A[:m])$
+\State $Right \gets \textsc{Counting-merge-sort}(A[m:])$
+\State $A, c  \gets \textsc{Merge-and-count}(Left_{arr}, Right_{arr})$
+\State $swaps \gets Left_{swap} + Right_{swap} + c$
+\EndIf
+\State \Return $A, swaps$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Every inversion either (i) lies entirely in the left half, (ii) lies entirely in the right half, or (iii) spans across the two halves. Cases (i) and (ii) are counted recursively. Case (iii) is counted during the merge step by adding the number of remaining elements in the left subarray whenever an element from the right subarray is placed before them. Hence all inversions are counted exactly once.
+
+Since the recursive structure of the algorithm call has not been modified ($T(n)=2T(n/2) + O(n)$), the running time remains $\Theta(n\log n)$. This can be verified using the Master Theorem: at each step, two subproblems of size $n/2$ are created, which falls under the balanced case. The depth of the tree is $O(\log n)$, and each level requires $O(n)$ work, bringing the total complexity to $O(n\log n)$.
+
+\begin{algorithm}
+\caption{Bubble sort with modification to count the number of inversions}\label{code:bubbleSort}
+\begin{algorithmic}
+\Procedure{Counting-bubble-sort}{A}
+\State $swap \gets 0$
+\For{$i \gets 0$ to $A_{length}$}
+\For{$j \gets 1$ to $A_{length}-i$}
+\If{$A[j-1] > A[j]$}
+\State swap $A[j-1]$ and $A[j]$
+\State $swap \gets swap + 1$
+\EndIf
+\EndFor
+\EndFor
+\State \Return $swap$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}

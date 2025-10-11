@@ -1,0 +1,31 @@
+
+\begin{proof}
+
+Let $\mathcal{S} = \{0,1\}^n$ be the set of bit strings of length $n$, where $n = 2k$ for $k \in \mathbb{Z}_+$. A bit string is said to be balanced if it contains as many $1$s as $0$s. More formally, a bit string of even length $n$ is balanced if
+
+$$\sum_{i=1}^n b_i = \frac{n}{2}$$
+
+where $b_i$ is the $i$th bit in the string. It follows that the number $r$ of balanced strings in $\mathcal{S}$ is exactly
+
+$$r = \begin{pmatrix} n \\ n/2\end{pmatrix} = \frac{n!}{(n/2)!(n/2)!} = \frac{n!}{\left[ (n/2)!\right]^2}$$
+
+And thus, the probability $p$ that a string picked uniformly at random from $\mathcal{S}$ is balanced is:
+
+$$p = \frac{r}{| \mathcal{S}|} = \frac{\begin{pmatrix} n \\ n/2 \end{pmatrix}}{2^n}$$
+
+Approximating $r$ using Stirling's approximation, we get:
+
+$$r = \frac{n!}{\left[ (n/2)!\right]^2} 
+\sim \frac{\sqrt{2\pi n} \left( \frac{n}{e}\right)^n}{\pi n \left( \frac{n}{2e} \right)^n} = \frac{\sqrt{2\pi n}}{\pi n}2^n =a\frac{2^n}{\sqrt{n}}$$
+
+where we defined the constant $a = \sqrt{\frac{2}{\pi}}$. Plugging this result back into our probability $p$, we finally obtain:
+
+$$p = \frac{r}{2^n} \sim a\frac{2^n}{\sqrt{n}}\frac{1}{2^n} = \frac{a}{\sqrt{n}}$$
+
+Let $X \sim Geom(p)$ be the number of independent samples from $\mathcal{S}$ (with replacement) until the first balanced string is observed. It's expectation is given by
+
+$$\mathbb{E}[X] = \frac{1}{p} = \frac{\sqrt{n}}{a} = O(\sqrt{n})$$
+
+The same asymptotic order $\Theta(\sqrt{n})$ holds if sampling is done without replacement, since the difference is negligible compared to $\sqrt{n}$.
+
+\end{proof}

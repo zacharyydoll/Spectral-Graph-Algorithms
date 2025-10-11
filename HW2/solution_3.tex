@@ -1,0 +1,94 @@
+\subsection{Part A}
+    \begin{proof}
+    Consider a fixed edge $e$ and fixed time $t$. Let 
+
+    $$
+    I_i^{(e,t)} \stackrel{\text{def}}{=} \mathbb{I}\{\Delta_i = t-j\}
+    $$
+
+    Be the indicator variable denoting that $e$ is the the $j$-th position of packet $i$ at time $t$. Thus:
+
+    $$X_{e,t} = \sum_i I_i^{(e,t)}$$
+
+    We note that, because $\Delta_i$ are iid, the indicator variables $\{I_i^{(e,t)}\}_i$ are also independent. And since $\Delta_i \sim U\{0,...,C\}$, we have:
+
+    $$
+    \mathbb{P}\left[ I_i^{(e,t)} = 1\right] = \mathbb{P}[\Delta_i = t-j] = \frac{1}{C+1}
+    $$
+
+    Let $n_e$ be the number of paths that use edge $e$. By definition, of congestion, we have that $n_e \le C$. We therefore have:
+
+    $$
+    \mu = \mathbb{E}\left[ X_{e,t}\right] = \sum_{i=1}^{n_e} \mathbb{E} \left[ I_i^{(e,t)}\right] = n_e \cdot \frac{1}{C+1} \le \frac{C}{C+1} < 1
+    $$
+
+    For any $\lambda > 0$, Markov's inequality yields:
+
+    $$
+    \begin{equation}\label{eq:Markov}
+    \mathbb{P}\left[ X_{e,t} \ge \alpha\right] = \mathbb{P}\left[ e^{\lambda X_{e,t}} \ge e^{\lambda \alpha}\right] \le \mathbb{E}\left[ e^{\lambda X_{e,t}}\right]e^{-\lambda \alpha}
+    \end{equation}
+    $$
+
+    By independence, bounding the MGF gives
+
+    $$
+    \begin{align*}
+        \mathbb{E}\left[e^{\lambda X_{e,t}}\right]
+        &= \prod_{i=1}^{n_e} \mathbb{E}\left[e^{\lambda I_i^{(e,t)}}\right] \\
+        &= \prod_i \left[(1-p_i) + p_i e^\lambda\right] \\
+        &= \prod_i \left[1 + p_i(e^\lambda - 1)\right] \\
+        &\le \prod_i \exp\left[p_i(e^\lambda -1)\right] \\
+        &= \exp\left[(e^\lambda -1)\sum_i p_i\right] \\
+        &= \exp\left(\mu(e^\lambda -1)\right)
+    \end{align*}
+    $$
+
+    Where the inequality comes from the property $(1+x) \le e^x, \ \forall x \in \mathbb{R}$, which is a direct result of the Taylor expansion for $e^x$. Thus, (\ref{eq:Markov}) becomes:
+
+    $$
+    \begin{equation} \label{eq:Chernoff}
+    \mathbb{P}\left[ X_{e,t} \ge \alpha \right] \le \exp\left(\mu(e^\lambda -1) -\lambda \alpha\right)
+    \end{equation}
+    $$
+
+    Minimizing the exponent w.r.t $\lambda > 0$ yields $\tilde\lambda = \log \frac{\alpha}{\mu}$. And plugging back into (\ref{eq:Chernoff}), we have
+
+    $$
+    \begin{equation}\label{eq:fixed}
+    \mathbb{P}\left[ X_{e,t} \ge \alpha \right] \le \exp\left[ \alpha - \mu - \alpha \log \frac{\alpha}{\mu}\right]
+    \le \exp\left( \alpha - \alpha \log \frac{\alpha}{\mu}\right)
+    = \left( \frac{e\mu}{\alpha} \right)^\alpha \le \left( \frac{e}{\alpha} \right)^\alpha
+    \end{equation}
+    $$
+
+    Where we use the fact that $\mu < 1$ in the last inequality. 
+
+    Define $N$ as the number of relevant pairs $(e,t)$. Each of the $k$ packets crosses at most $D$ edges at $(C+1)$ possible time steps. Thus
+
+    $$
+    N \le  kD(C+1) 
+    $$
+
+    By taking the union bound, equation (\ref{eq:fixed}) becomes:
+
+    $$
+    \mathbb{P}\left[ \max_{e,t} X_{e,t} \ge \alpha \right] \le N\left( \frac{e}{\alpha} \right)^\alpha
+    $$
+
+    Picking $\alpha = c\log N$ for a suitable constant $c$, we finally have:
+
+    $$
+    M\left( \frac{e}{\alpha} \right)^\alpha = \exp\left[ \log N + \alpha (1-\log \alpha) \right] = \exp \left( \log N \left[ 1 + c - c\log(c\log N)\right]\right) = o(1)
+    $$
+
+    Thus
+
+    $$\mathbb{P}[R_{\text{max}} \ge c \log N] \le o(1) \Longrightarrow \mathbb{P}[R_{\text{max}} \le c\log N] = 1 - o(1)$$
+
+    Which implies 
+    
+    $$
+    R_{\text{max}} = \max_{e,t}X_{e,t} = O(\log N) = O(\log (kDC)) \quad \text{w.h.p}
+    $$
+    \end{proof}
