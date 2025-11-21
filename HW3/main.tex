@@ -1,0 +1,213 @@
+\documentclass[11pt,a4paper,twoside]{article}
+
+\newcommand{\assignment}{Homework 3 Solutions}
+\newcommand{\studentone}{Barras Simon <simon.barras@epfl.ch>}
+\newcommand{\studenttwo}{Zachary Doll <zachary.doll@epfl.ch>} 
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{mathpazo}
+
+\usepackage{amsmath,amssymb,amsfonts}
+
+\usepackage{nicefrac}
+
+\newcommand{\nf}{\nicefrac}
+
+\usepackage[backref,colorlinks,citecolor=blue,bookmarks=true]{hyperref}
+
+\usepackage[shortlabels]{enumitem}
+\newlist{alphenum}{enumerate}{2}
+\setlist[alphenum]{label=(\alph*),beginpenalty=10000}
+
+\newlist{menum}{enumerate}{2}
+\setlist[menum]{label=(\arabic*),beginpenalty=10000}
+
+\usepackage[hmargin=2.8cm,top=2.8cm,bottom=3.5cm,nohead,footskip=48pt]{geometry}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Claim}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+
+\usepackage{bm}
+
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\poly}{\mathrm{poly}}
+
+\parindent0pt
+\parskip1ex
+
+% reset mathcal fonts to detault
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\makeatletter
+\newcommand{\header}{%
+\mbox{}
+\vspace*{-1.8cm}
+\par
+\parbox[b]{13.1cm}{\raggedright
+    {\large\bfseries Topics in Theoretical Computer Science: Randomized Algorithms}\\[.5ex]    
+    EPFL, Fall semester, 2025 \\[2ex]
+}%
+%\parbox[b]{4.3cm}{\hspace*{0pt}\fbox{\includegraphics[width=4.3cm]{RSP-LEO-logo.pdf}}}%
+
+  
+\vspace*{-.3cm}
+
+\rule{\textwidth}{.5pt}
+\vspace*{-.2cm}
+
+{\Large\bfseries \assignment } \\[2ex]
+{\large \studentone \\[1ex]
+\@ifundefined{studenttwo}{}{
+    \studenttwo \\[1ex]
+}
+\@ifundefined{studentthree}{}{
+    \studentthree \\[1ex]
+}
+}
+\vspace*{-0.5cm}
+
+\rule{\textwidth}{.5pt}
+
+\vspace*{-.3cm}
+
+}
+\makeatother
+
+
+\begin{document}
+
+\header
+
+
+
+
+\section{Problem 1 (Frugal Vertex Coloring)}
+Let $G=(V,E)$ be a graph with maximum degree $\Delta$. A vertex coloring $\chi: V \rightarrow C$ is called \emph{$\beta$-frugal} if for every vertex $v$, no color appears more than $\beta$ times in its neighborhood $N(v)$. That is,
+\[
+    |\{u \in N(v) : \chi(u) = c\}| \leq \beta \quad \text{for all } v \in V, c \in C.
+\]
+A coloring is \emph{proper} if $\chi(u) \neq \chi(v)$ for all edges $\{u,v\} \in E$.
+
+Show that for any constant integer $\beta \geq 1$, there exists a $\beta$-frugal coloring of $G$ using $Q = O(\Delta^{1+1/\beta})$ colors.
+
+In fact, a stronger statement is true: there is a coloring that is both proper and $\beta$-frugal. But we only require to prove the above weaker statement.
+
+
+
+\subsection{Solution}
+\input{solution_1.tex}
+
+\section{Problem 2 (Concentration for Euclidean MST)}
+Let $X_1, \dots, X_n$ be $n$ points chosen independently and uniformly at random from the unit square $[0, 1]^2$. Let $L(X_1, \dots, X_n)$ denote the total length of the Minimum Spanning Tree (MST) on these points, using Euclidean distances.
+
+Let $\mu = \E[L(X_1, \dots, X_n)]$ be the expected length of the MST. Prove that for any $\epsilon > 0$, the probability of deviating from the mean by $\epsilon n$ is exponentially small in $n$. Specifically, show that:
+$$ \Pr(|L - \mu| \geq \epsilon n) \leq 2 \exp\left( -\frac{\epsilon^2 n}{25} \right) $$
+
+Hint: You may use the following fact without proof.
+
+\textbf{Fact:} Any Euclidean MST on points in the 2D plane (using the $L_2$ norm) has a maximum vertex degree of at most $5$.
+
+\subsection{Solution}
+\input{solution_2.tex}
+
+\section{Problem 3 (A randomized algorithm for $k$-SAT)}
+Consider a satisfiable $k$-CNF $\Phi$ on $n$ variables. One try of the algorithm:
+start at uniform $x_0\in\{0,1\}^n$; for $T$ steps $t=0,1, \ldots, T-1$, if $x_t$ satisfies $\Phi$ return $x_t$,
+else pick an unsatisfied clause $C$, choose a uniform random literal $\ell\in C$ and flip its variable to obtain $x_{t+1}$ from $x_t$.
+If no solution within $T$ steps, restart. Fix a satisfying assignment $x^\star$ and let $D_t=\|x_t-x^\star\|_1$.
+\begin{enumerate}
+    \item[(a)] Show that whenever $D_t>0$, $\Pr[D_{t+1}=D_t-1\mid x_t]\ge 1/k$.
+    \item[(b)] If $D_0=d$, prove $\Pr[\text{hit }0\text{ within }d\text{ steps}]\ge (1/k)^d$ (via $d$ consecutive decreases).
+    \item[(c)] For $x_0$ uniform, $D_0\sim\mathrm{Bin}(n,1/2)$. Show
+          $\Pr[\text{success in one try}]\ge \left(\frac{k+1}{2k}\right)^{n}$.
+    \item[(d)] Argue that $T=n$ suffices to capture the event in (b), and conclude the expected time
+          $\tilde O\!\left((\tfrac{2k}{k+1})^{n}\right)$; specialize to $k=3$ as $\tilde O\!\left((\tfrac{3}{2})^{n}\right)$.
+\end{enumerate}
+
+\medskip
+\textbf{Remark (Sch\"oning's bound).}
+If in (b) you instead bound $\Pr[\text{ever hit }0\mid D_0=d]\ge (1/(k-1))^d$
+using a biased random-walk/gambler's-ruin argument with step $-1$ w.p.\ $1/k$ and $+1$ w.p.\ $1-1/k$,
+then averaging as in (c) yields per-try success $\big(\frac{k}{2(k-1)}\big)^n$ and expected time
+$\tilde O\!\left((2-\frac{2}{k})^{n}\right)$ (e.g., $\tilde O((\tfrac{4}{3})^{n})$ for 3-SAT).
+
+
+
+\subsection{Solution}
+\input{solution_3.tex}
+
+\section{Problem 4 (The Long(est) Path Home)}
+Given a graph $G = (V,E)$,
+you want to find long simple paths in the graph in polynomial time.
+
+\begin{alphenum}
+    \item (Algorithm 1: Dead easy.) Show that you can find a path of
+    length $k$ (if such a path exists) in time $n\Delta^k$, where
+    $\Delta$ is the maximum degree of $G$.
+
+    \item (Easy.) If the graph were directed and acyclic (i.e., a DAG), then show that
+    you can deterministically find the longest path in $G$ in time
+    $O(m+n)$. Here, and in general, $m = |E|$ and $n = |V|$.
+
+
+    \item (Algorithm 2:) Consider running the following procedure $n$
+    times, and outputing the longest path found in these $n$ tries.
+    \begin{quote}
+        Take a random permutation of the vertices, and direct each edge
+        from the lower endpoint to the higher endpoint to create a DAG
+        $\vec{G}$.  Find a longest path in~$\vec{G}$.
+    \end{quote}
+
+    Show that for $k=c\frac{\log n}{\log\log n}$ for some constant
+    $c>0$, Algorithm 2 will find a path of length $k$ (if it exists)
+    with probability at least $1/2$.
+
+    \item Now, consider a slight extension of this idea. Suppose you
+    have a graph $G$, and you color the vertices using $k$ colors
+    (neighbors need not have different color).  A path is called
+    \emph{polychromatic} if has $\ell \leq k$ vertices, and all the
+    $\ell$ vertices have different colors.
+
+    \begin{enumerate}
+
+        \item[i.] Show that you can find a polychromatic path of length $k$ in
+              time that is $\poly(n, k) 2^k$.  (So, this is polynomial
+              time for $k = O(\log n)$).
+
+        \item[ii.] (Algorithm 3:) Consider running the following procedure $n$
+              times, and outputing the longest path found in these $n$ tries.
+
+              \begin{quote} Take a random coloring of the vertices using $k$
+                  colors, and find the polychromatic path of length at most $k$ in
+                  $G$.  \end{quote}
+
+              Show that for $k = c\log n$ for some constant $c>0$, Algorithm 3
+              will find a path of length $k$ (if it exists) with probability at
+              least $1/2$.  (Hint: Use Stirling's approximation.)
+    \end{enumerate}
+    % Note: the current best guarantee known is $2^{\sqrt{\log n}}$, due
+    % to Hal Gabow. Can we do better?
+\end{alphenum}
+
+
+
+\subsection{Solution}
+\input{solution_4.tex}
+
+\end{document}

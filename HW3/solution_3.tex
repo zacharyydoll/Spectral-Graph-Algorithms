@@ -1,0 +1,65 @@
+\subsubsection{Part A}
+\begin{proof}
+    
+Pick an arbitrary assignment $x_t$ with distance $D_t > 0$ from a satisfying $x^\star$, and assume $x_t$ does not satisfy $\Phi$ (in which case the algorithm would terminate).
+
+Because $x^\star$ satisfies $\Phi$, every clause $C$ contains at least one literal $\ell^\star \in C$ set to true under the assignment $x^\star$. Conversely, as $C$ is unsatisfied under $x_t$, every literal of $C$ must be false in $x_t$. In particular, we have that $\ell^\star \in C$ is false in $x_t$. Because the algorithm picks a literal $\ell \in C$ u.a.r. among the $k$ possible choices, and at least one of them ($\ell^\star$) would decrease the Hamming distance by $1$, it follows that 
+$$\Pr[D_{t+1} = D_t - 1 \,|\, x_t] \ge \frac{1}{k}$$
+\end{proof}
+
+
+\subsubsection{Part B}
+
+\begin{proof}
+We assume the satisfying assignment $x^\star$ is unique, as per clarifications on the exercise. 
+
+Consider the event that each of the first $d$ steps decrease the distance by exactly $1$. From part $(a)$, we have that 
+
+$$\Pr\left[ \bigcap_{t=0}^{d-1} \{D_{t+1} = D_t -1\}\right] = \prod_{t=0}^{d-1} \Pr[D_{t+1} = D_t - 1 \,|\, x_t] \ge \left( \frac{1}{k}\right)^d$$
+
+Thus:
+
+$$\Pr[\text{ hit } 0 \text{ within } d \text{ steps} \, | \, D_0 = d \,] \ge \left( \frac{1}{k}\right)^d$$
+\end{proof}
+
+
+\subsubsection{Part C}
+
+\begin{proof}
+the result from part $(b)$ gives us
+
+$$\Pr[\text{ success in one try } \, | \, D_0 = d \,] \ge \left( \frac{1}{k}\right)^d$$
+
+From which it immediately follows that 
+
+$$
+\begin{align*}
+\Pr[ \text{ success in one try }] \ge \mathbb{E}\left[ \left(\frac{1}{k}\right)^{D_0}\right] &= \prod_{i=1}^n \mathbb{E}\left[ \left(\frac{1}{k}\right)^{Z}\right], \quad Z \sim \text{Ber}(1/2) \\
+&= \prod_{i=1}^n \left( \frac{1}{2} + \frac{1}{2} \cdot \frac{1}{k}\right) \\
+&= \left( \frac{k + 1}{2k}\right)^n
+\end{align*}
+$$
+Where we simply used the MGF of $D_0 \sim \text{Bin}(n, 1/2).$
+\end{proof}
+
+
+\subsubsection{Part D}
+
+The event from $(b)$, namely:
+$$D_0 = d \Longrightarrow \Pr[\text{ hit 0 within } d \text{ steps }] \ge (1/k)^d$$
+is fully contained in the first $d$ steps. Because we consider the K-SAT problem over $n$ variables, it is clear that the maximal possible initial distance is $D_0 = n$, i.e. when all variables from $x_0 \sim \mathcal{U}\{0,1\}^n$ differs from the satisfying assignment $x^\star$. Thus, $D_0 = d \le n$, and choosing $T=n$ suffices to capture the event fully. 
+
+From part $(c)$, we know that the probability of success in one try is:
+
+$$P \ge \left( \frac{k+1}{2k}\right)^n$$
+
+Therefore the expected number of necessary tries until success is 
+
+$$\mathbb{E}[\text{necessary tries until success}] = O(1/P) = O\left( \left(\frac{2k}{k+1}\right)^n\right)$$
+
+Each try costs $T=n$ time, and thus:
+
+$$\mathbb{E}[\text{time}] = O\left(n \left(\frac{2k}{k+1}\right)^n\right) = \tilde O \left( \left(\frac{2k}{k+1}\right)^n\right)$$
+
+
+

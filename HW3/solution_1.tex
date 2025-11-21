@@ -1,0 +1,68 @@
+\begin{proof}
+
+Consider a color set $C$ with cardinality $|C| := Q$. Let us color each vertex of $G = (V,E)$ uniformly at random:
+
+$$\chi(v) \stackrel{\text{i.i.d.}}{\sim} \mathcal{U}\{Q\}, \quad \forall v \in V$$
+
+For each vertex $v \in V$ all colours $c \in C$, and any subset $S \subseteq N(v)$ of size $|S| = \beta + 1$, define the bad event:
+
+$$B(v, c, S) = \{\text{all vertices in S have color } c\}$$
+
+If such a bad event exists, then by definition, the coloring $\chi$ is not $\beta$-frugal over $G$.
+
+From the uniform color assignment, we have that the probability $p$ of the bad event occuring for a fixed tuple $(v,c,S)$ is given by:
+
+$$\mathbb{P}[B(v,c,S)] = Q^{-(\beta + 1)} \stackrel{\triangle}{=} p$$
+
+Let us now find an upper-bound for the number of events $d^\star$ on which $B(u,c,S)$ depends, for a fixed vertex $u \in S$:
+\begin{enumerate}
+    \item Because each color is assigned independently for each vertex, the event $B(u,c,S)$ only depends on the colors in $S$. In other words, for the events $B(u,c,S)$ and $B(w,\tilde c, \tilde S)$ to be dependent, it must be the case that $u \in \tilde S \subseteq N(w)$, i.e. $w$ and $u$ must be neighbors.
+    
+    By hypothesis, we know that $\delta(v) \le \Delta$ for all $v \in V$, so there are at most $\Delta$ choices for an initial vertex. 
+
+    \item We have at most $\left( \begin{smallmatrix} \Delta - 1 \\ \beta \end{smallmatrix}\right)$ choices for the remaining $\beta$ vertices in $\tilde S \subseteq N(w) \backslash\{u\}$.
+
+    \item We have $Q$ choices for the color $\tilde c \in C$.
+\end{enumerate}
+Thus, 
+
+$$d^\star \le \Delta 
+\begin{pmatrix}
+    \Delta -1 \\
+    \beta
+\end{pmatrix} 
+Q -1$$
+
+Where we subtracted $1$ for the event itself. Union-bounding over the fixed cardinality $|S| = \beta + 1$ yields an upper-bound to the total number of events $d$ that any non-fixed event depends on:
+
+$$
+\begin{align*}
+d &\le (\beta + 1)d^\star \\
+&\le Q(\beta +1)\Delta \begin{pmatrix} \Delta -1 \\ \beta\end{pmatrix} -1 \\
+&\le Q (\beta +1) \Delta \left( \frac{e\Delta}{\beta}\right)^\beta -1\\
+&= Q(\beta +1)\left(\frac{e}{\beta}\right)^\beta \Delta^{\beta + 1} -1 \stackrel{\triangle}{=} QC_\beta \Delta^{\beta + 1} -1
+\end{align*}
+$$
+
+Where $C_\beta = (\beta +1)\left(\frac{e}{\beta}\right)^\beta$, and where we used stirling's bound in the third line:
+
+$$k! \ge \left( \frac{k}{e}\right)^k \Longrightarrow \frac{n^k}{k!} \le \frac{n^k}{(k/e)^k} = \left( \frac{en}{k}\right)^k$$
+
+The Local Lovász Lemma states that, if $ep(d+1) \le 1$, then with positive probability, no bad event occurs, meaning a $\beta$-frugal coloring exists. 
+Thus, plugging in the computed value for $p$ and the above bound for $d$ into the LLL inequality, it suffices to have
+
+$$
+eQ^{-(\beta +1)} \cdot QC_\beta \Delta^{\beta + 1} \le 1 \
+\Longrightarrow eC_\beta Q^{-\beta}\Delta^{\beta +1} \le 1 \\
+$$
+
+Finally, solving for $Q$ gives:
+
+$$Q^\beta \ge eC_\beta \Delta^{\beta +1} \Longrightarrow Q \ge (eC_\beta)^{1/\beta } \Delta^{1 + 1/\beta}$$
+
+And thus
+$$Q =O\left( \Delta^{1 + 1/\beta}\right)$$
+as required. 
+
+
+\end{proof}

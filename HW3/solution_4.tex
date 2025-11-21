@@ -1,0 +1,256 @@
+\subsubsection{Part A}
+We aim to show that the brute-force algorithm for finding the longest path of length at most $k$ in a graph $G=(V,E)$ runs in $O(n\Delta^k)$, where $n=|V|$ is the number of vertices and $\Delta$ is the maximum degree of any vertex in $G$.
+
+\begin{proof}
+The high-level algorithm (Algorithm~\ref{code:longestPathGraph}) enumerates all vertices as potential starting points for the longest path.
+For each vertex $v\in V$, it calls a recursive procedure that explores all possible simple paths starting from $v$ with length at most $k$. The outer loop thus contributes as factor of $O(n)$.
+
+\begin{algorithm}
+\caption{Find longest path in the graph}\label{code:longestPathGraph}
+\begin{algorithmic}
+\Procedure{Longest-Path}{$G=(V, E), k$}
+\State $P \gets \emptyset$
+\For{$ v \in V$}
+    \State $Q \gets \operatorname{Longest-Path-Vertex}(G, v, \emptyset, k)$
+    \State $P \gets \operatorname{max}(P, Q)$
+\EndFor
+\State \Return $P$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{code:longestPathVertex} describes the recursive procedure that computes the longest path starting from a fixed vertex $v$.
+At each recursive step, the algorithm considers all neighbors $u$ of $v$ (excluding the predecessor vertex $p$) and recursively explores all paths of remaining length $k-1$ starting from $u$.
+
+Since each vertex has at most $\Delta$ neighbors, and the recursion proceeds to depth $k$, the total number of recursive calls can be upper-bounded by $O(\Delta^k)$. This corresponds to exploring all possible paths of length up to $k$ starting from a given vertex.
+
+\begin{algorithm}
+\caption{Find longest path of a vertex}\label{code:longestPathVertex}
+\begin{algorithmic}
+\Procedure{Longest-Path-Vertex}{$G=(V, E), v, p, k$}
+\State $P \gets \emptyset$
+\If{$k=0$} \State \Return $P$
+\EndIf
+\For{$ u \in V \text{ where }\{u, v\} \in E \text{ and } u \ne p$}
+    \State $Q \gets \operatorname{Longest-Path-Vertex}(G, u, v, k-1)$
+    \State $P \gets \operatorname{max}(P, Q)$
+\EndFor
+\State \Return $P$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Combining both procedures, the overall time complexity is obtained by multiplying the outer $O(n)$ loop with the recursive exploration cost $O(\Delta^k)$.
+Therefore, the total running time of the algorithm is
+$$
+O(n\Delta^k)
+$$
+\end{proof}
+
+
+
+
+
+\subsubsection{Part B}
+We aim to show that if the graph $G=(V,E)$ is directed and acyclic, there exist an algorithm to find the longest path in time $O(V+E)$.
+
+\begin{proof}
+Finding the the longest path in a DAG (Directed Acyclic Graph) can achieved efficiently using a DFS (Depth-First Search) combined with dynamic programming.
+This approach ensures that each vertex is processed only once, avoiding redundant computations and achieving the desired linear-time complexity.
+
+The high-level procedure (Algorithm~\ref{code:longestPathDAG}) iterates over all vertices, treating each as potential starting points for the longest path.
+For every vertex $v\in V$, it invokes a recursive routines that computes and memorizes the longest path starting from $v$.
+The outer loop thus contributes as factor of $O(V)$.
+
+\begin{algorithm}
+\caption{Find longest path in a DAG}\label{code:longestPathDAG}
+\begin{algorithmic}
+\Procedure{Longest-Path-DAG}{$G=(V, E), k$}
+\State $\mathcal{P} \gets \{\emptyset\}$ for $|V|$
+\For{$ v \in V$}
+    \State $\operatorname{Longest-Path-Vertex-DAG}(G, \mathcal{P}, v)$
+\EndFor
+\State \Return $\operatorname{max}(P \in \mathcal{P})$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{code:longestPathVertexDAG} defines the recursive routine improved with dynamic programming that computes the longest path starting from a fixed vertex $v$.
+If the longest path for $v$ has already been computed (i.e., $\mathcal{P}[v] \neq \emptyset$), the result is returned immediately.
+Otherwise, for each outgoing edge $(v, u) \in E$, the algorithm recursively computes the longest path starting from $u$ and updates $\mathcal{P}[v]$ accordingly.
+
+\begin{algorithm}
+\caption{Find longest path of a vertex in DAG}\label{code:longestPathVertexDAG}
+\begin{algorithmic}
+\Procedure{Longest-Path-Vertex-DAG}{$G=(V, E), \mathcal{P}, v$}
+\If{$\mathcal{P}[v] \ne \emptyset$}
+    \Return
+\EndIf
+
+\For{$ e=\{v, u\} \in E$}
+    \State $\operatorname{Longest-Path-Vertex-DAG}(G, \mathcal{P}, u)$
+    \State $\mathcal{P}[v] \gets \operatorname{max}(\mathcal{P}[v], \mathcal{P}[u]+e)$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Each vertex $v$ is visited only once, and during its processing, the algorithm inspects all its outgoing edges.
+The total amount of work fo all vertices is the total number of edges $E$.
+
+Thus combining bot procedures yields an algorithm that computes the longest path in a DAG in linear time.
+$$
+O(V+E)
+$$
+\end{proof}
+
+
+
+
+
+\subsubsection{Part C}
+We claim that if we assign a random ordering to all vertices of an undirected graph $G=(V,E)$ and orient each edge from the vertex with smaller index to the one with larger index, we obtain a directed acyclic graph (DAG) $\vec G=(V,E)$.
+
+Now, consider construction $n$ independent random orientations $\vec G_1,\dots,\vec G_n$.
+We want to show that, for
+$$
+k=c\frac{\log n}{\log\log n}
+$$
+with a sufficiently large constant $c>0$, the probability that at least one of these DAGs contains a path of length $k$ is at least $\tfrac{1}{2}$:
+$$
+\Pr\left[\exists i,  \space P\subseteq \vec G_i, \space\operatorname{len}(P)=k\right] \ge \frac{1}{2}
+$$
+
+\begin{proof}
+Fix a specific path $P$ of length $k$ in $G$.
+It consists of $k+1$ vertices.
+When we randomly permute the vertices, there are $(k+1)!$ possible relative orderings of these vertices, and only one of them produces an increasing order consistent with the directed edges of $\vec G$.
+Hence
+$$
+\Pr\left[P\subseteq\vec G\right] = \frac{1}{(k+1)!} =: p
+$$
+The longer the path, the smaller this probability becomes.
+Let $P^\star$ be a longest path in $G$.
+For our family of random orientations, the probability that at least one of the $\vec G_i$ contains $P^\star$ is
+$$
+\Pr\left[P\in \bigcup_{i=1}^n\vec G_i\right] \ge \Pr\left[P^\star\in \bigcup_{i=1}^n\vec G_i \right] = 1 - \Pr\left[P^\star\notin \bigcup_{i=1}^n\vec G_i \right] = 1 -(1-p)^n
+$$
+Using the standard exponential bound $(1-p)^n \le e^{-pn}$.
+$$
+\Pr\left[P^\star\in \bigcup_{i=1}^n\vec G_i \right] \ge 1-e^{-pn} = 1-\exp\left(-n\frac{1}{(k+1)!}\right) = 1-\exp\left(-n\frac{1}{\left(c\frac{\log n}{\log\log n}+1\right)!}\right)
+$$
+
+Using Stirling's bound
+$$
+(k+1)! \ge \sqrt{2\pi(k+1)}\left(\frac{k+1}{e}\right)^{k+1}
+$$
+we obtain
+$$
+\frac{1}{(k+1)!} \le \frac{1}{\sqrt{2\pi(k+1)}}\left(\frac{e}{k+1}\right)^{k+1}
+$$
+Substituting $k = c\frac{\log n}{\log\log n}$
+$$
+p \le \frac{1}{\sqrt{2\pi k}}\left(\frac{e\log\log n}{c \log n}\right)^{c\frac{\log n}{\log\log n}}
+$$
+Hence
+$$
+pn \le n^{1-c+o(1)}
+$$
+
+If we choose any $c>1$, then $pn \to 0$ as $n\to\infty$, implying $1-e^{-pn} \to 0$.
+Conversely, if $c<1$, then $pn \to \infty$, and 
+$$
+1-e^{-pn} \to 1
+$$
+Thus, there exist a threshold constant $c^\star\approx 1$ such tact for $c<c^\star$ the probability exceeds $\tfrac{1}{2}$ for large $n$.
+\end{proof}
+
+
+
+
+
+\subsubsection{Part D}
+Consider a graph $G=(V, E)$ where each vertex is assigned one of $k$ colors, such that no two adjacent vertices share the same color.
+A path $P$ is said to be polychromatic if it contains at most one vertex of each color.
+Clearly, the length of any such path satisfies $\operatorname{len}(P) \le k$.
+
+We claim that there exist a algorithms running in time $\operatorname{poly}(n,k)2^k$ that finds the longest polychromatic path.
+
+\begin{proof}
+Consider a dynamic programming (DP) table defined as:
+$$
+\operatorname{DP}[C][v] = \begin{cases}
+    \operatorname{True} \text{ if there exists a path ending at vertex $v$ with $C$} \\
+    \operatorname{False} \text{ otherwise}
+\end{cases}
+$$
+Where $C$ is a polychromatic subset.
+
+The DP is initialized for single-vertex paths:
+$$
+\operatorname{DP}[\operatorname{col}(v)][v] = \operatorname{True}, \quad\forall v \in V
+$$
+Then, it is updated recursively:
+$$
+\operatorname{DP}[C][v] = \bigvee_{u\in\operatorname{N}(v)} \operatorname{DP}[C\setminus\operatorname{col}(v)][u]
+$$
+Where $N(v)$ denotes the set of neighbors of $v$.
+
+Each entry in the DP table represents whether a polychromatic path with color subset $C$ ends at vertex $v$.
+
+Since there are $2^k$ subsets of colors and $n$ vertices, the table contains $O(n2^k)$ entries.
+For each vertex, we may check all its incident edges, leading to a total time complexity of:
+$$
+O\left(2^k(n+m)\right) = \operatorname{poly}(n, k)2^k
+$$
+\end{proof}
+
+
+
+By repeating the random coloring of the graph $G=(V,E)$ independently $n$ times to generate graphs $G^\bullet_1,\dots,G^\bullet_n$, we claim that for
+$$
+k = c\log n
+$$
+with constant $c>0$, the algorithm finds a polychromatic path of length $k$ (if exists) with probability at least $\frac{1}{2}$:
+$$
+\Pr\left[\exists i,  \space P\subseteq G_i^\bullet, \space\operatorname{len}(P)=k\right] \ge \frac{1}{2}
+$$
+
+\begin{proof}
+Fix a specific path $P$ of length $k$ in $G$.
+The path contains $k$ distinct vertices, each independently assigned one of $k$ color.
+
+There are $k^k$ possible colorings of the vertices along $P$, but only those in which all vertices have distinct colors yield a polychromatic path. The number of distinct-color colorings equals $k!$.
+Thus, for a single random coloring:
+$$
+\Pr\left[\operatorname{p}(P)\in G^\bullet\right] = \frac{k!}{k^k} =: p
+$$
+Where $\operatorname{p}(P)$ is the polychromatic possible path of $P$.
+
+For our family of random coloring, the probability that at least one of the $G_i^\bullet$ contains a valid $\operatorname{p}(P)$ of length $k$ is
+$$
+\Pr\left[\exists i:  \space \operatorname{p}(P)\in G_i^\bullet\right] = 1-(1-p)^n \ge 1-e^{-pn} = 1-\exp\left(-n\frac{k!}{k^k}\right)
+$$
+To analyze this expression asymptotically, we apply Stirling's approximation:
+$$
+k! \approx\sqrt{2\pi k}\left(\frac{k}{e}\right)^k
+$$
+Thus,
+$$
+\frac{k!}{k^k} \approx e^{-k}\sqrt{2\pi k}
+$$
+Plugging this back, we get:
+$$
+\Pr\left[\exists i:  \space \operatorname{p}(P)\in G_i^\bullet\right] \ge 1-\exp\left(e^{-k}\sqrt{2\pi k}\right)
+$$
+Setting $k=c\log n$
+$$
+ne^{-k}\sqrt{2\pi k} = ne^{-c\log n}\sqrt{2\pi c\log n} = n^{1-c}\sqrt{2\pi c\log n}
+$$
+For this probability to be at least $\tfrac{1}{2}$, we require the exponent to be at least $\ln 2$. That is, $n^{1-c}\sqrt{\log n} = \Omega(1)$, which holds for any constant $c<1$.
+
+Therefore, for any constant $c<1$,
+$$
+k = c \log n \Rightarrow \Pr\left[\exists i:  \space \operatorname{p}(P)\in G_i^\bullet\right] \ge \frac{1}{2}
+$$
+\end{proof}

@@ -1,0 +1,48 @@
+We aim to prove that $L$ is a Lipschitz function, and then apply McDiarmid's inequality to obtain the desired concentration bound.
+
+\begin{proof}
+We claim that $L$ is a Lipschitz function.
+That is, for any two configurations $X=(X_1, \dots, X_n)$ and $X'=(X_1, \dots, X_i', \dots, X_n)$ that differ only in one coordinate $i$, the following holds:
+$$
+|L(X) - L(X')| \le c
+$$
+for some constant $c$.
+
+Let $T$ be the minimum spanning tree (MST) of $X$, and let $T'$ be the tree obtained from $T$ by replacing the vertex $X_i$ with $X_i'$.
+Although $T'$ may not be the MST of $X'$, it is still a valid spanning tree on the modified set of points.
+let $T'^\star$ denote the MST of $X'$, then:
+$$
+\operatorname{len}(T'^\star) \le \operatorname{len}(T')
+$$
+
+Since all points lie within the unit square $[0,1]^2$, the maximum Euclidean distance between any two point is
+$$
+\sqrt{1^2+1^2}=\sqrt{2}
+$$
+
+Given the fact that in planar MST, each vertex has maximum degree of 5.
+Therefore, when a single point $X_i$ is moved to $X_i'$, at most five edges are affected, each by changing by at most $\sqrt{2}$ in length.
+Hence
+$$
+|\operatorname{len}(T) - \operatorname{len}(T')| \le 5\sqrt{2}
+$$
+Since $\operatorname{len}(T'^\star) \le \operatorname{len}(T')$, it follows that:
+$$
+|L(X) - L(X')| \le |\operatorname{len}(T) - \operatorname{len}(T'^\star)| \le 5\sqrt{2}
+$$
+Thus, $L$ is $c$-Lipschitz with $c=5\sqrt{2}$.
+
+We can now apply McDiarmid's inequality, which states that if $L$ is $c_i$-Lipschitz in each coordinate, then:
+$$
+\Pr\big[ |L - \mu| \geq t \big] \leq 2\exp\!\left( \frac{-2t^2}{\sum_{i=1}^n c_i^2} \right)
+$$
+Since each $c_i=5\sqrt{2}$, we have
+$$
+\sum_{i=1}^n c_i^2 = n\cdot(5\sqrt{2})^2 = 50n
+$$
+Setting $t=\varepsilon n$, we obtain:
+$$
+\Pr\big[ |L - \mu| \geq \varepsilon n \big] \leq 2\exp\!\left( \frac{-2\varepsilon^2n^2}{50n} \right) = 2\exp\!\left( \frac{-\varepsilon^2n}{25} \right)
+$$
+
+\end{proof}
