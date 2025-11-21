@@ -7,11 +7,11 @@ The course was given by **Prof. Ola Svensson** and **Prof. Michael Kapralov** (E
 
 ## 📘 Course Description
 
->The course explored the **power of randomness in algorithm design**, showing how probabilistic techniques can lead to elegant and efficient solutions to complex computational problems. It covered both foundational principles and modern applications, with examples drawn from **graph algorithms**, **data structures**, **learning theory**, and **optimization**.  
+The course explored the **power of randomness in algorithm design**, showing how probabilistic techniques can lead to elegant and efficient solutions to complex computational problems. It covered both foundational principles and modern applications, with examples drawn from **graph algorithms**, **data structures**, **learning theory**, and **optimization**.  
 
->Key topics included **graph sparsification**, **randomized rounding**, **dimension reduction**, **Chernoff bounds**, **martingale inequalities**, and **the Lovász Local Lemma**. The course also touched on applications such as **approximate counting**, **differential privacy**, **learning from samples**, and **randomized methods in geometry and communication complexity**.  
+Key topics included **graph sparsification**, **randomized rounding**, **dimension reduction**, **Chernoff bounds**, **martingale inequalities**, and **the Lovász Local Lemma**. The course also touched on applications such as **approximate counting**, **differential privacy**, **learning from samples**, and **randomized methods in geometry and communication complexity**.  
 
->The EPFL offering was conducted in collaboration with the **Randomized Algorithms** course at **NYU**, running in parallel across both institutions.
+The EPFL offering was conducted in collaboration with the **Randomized Algorithms** course at **NYU**, running in parallel across both institutions.
 
 ---
 
